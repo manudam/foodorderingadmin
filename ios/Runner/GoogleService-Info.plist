@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>70430548453-rjq0l0nunl9oequaubd66anu9i58btn9.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.70430548453-rjq0l0nunl9oequaubd66anu9i58btn9</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDGASu8VLcYTxDbTy_2X4Wdfs_fPixZQsw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>70430548453</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.trianglecarrot.foodorderingadmin</string>
+	<key>PROJECT_ID</key>
+	<string>foodorderingapp-4f6ac</string>
+	<key>STORAGE_BUCKET</key>
+	<string>foodorderingapp-4f6ac.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:70430548453:ios:f5f6bf90ed8c9e81778f0c</string>
+	<key>DATABASE_URL</key>
+	<string>https://foodorderingapp-4f6ac.firebaseio.com</string>
+</dict>
+</plist>

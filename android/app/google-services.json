@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "70430548453",
+    "firebase_url": "https://foodorderingapp-4f6ac.firebaseio.com",
+    "project_id": "foodorderingapp-4f6ac",
+    "storage_bucket": "foodorderingapp-4f6ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70430548453:android:d1262997c6d1cac0778f0c",
+        "android_client_info": {
+          "package_name": "com.trianglecarrot.foodorderingadmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70430548453-629inm23hd7h5afu0ja50bmi5jaeliif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1R0gGjHhTasfPzeZkfCmKD313OzZuYeo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70430548453-629inm23hd7h5afu0ja50bmi5jaeliif.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "70430548453-rjq0l0nunl9oequaubd66anu9i58btn9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.trianglecarrot.foodorderingadmin"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70430548453:android:dc59f5097b283f42778f0c",
+        "android_client_info": {
+          "package_name": "com.trianglecarrot.foodorderingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "70430548453-629inm23hd7h5afu0ja50bmi5jaeliif.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1R0gGjHhTasfPzeZkfCmKD313OzZuYeo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "70430548453-629inm23hd7h5afu0ja50bmi5jaeliif.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "70430548453-rjq0l0nunl9oequaubd66anu9i58btn9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.trianglecarrot.foodorderingadmin"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
