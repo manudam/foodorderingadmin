@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Product {
-  String productId;
+  String id;
   final String name;
   final String description;
   final double price;
@@ -9,7 +9,7 @@ class Product {
   bool isFavorite;
 
   Product({
-    @required this.productId,
+    @required this.id,
     @required this.name,
     this.description,
     @required this.price,

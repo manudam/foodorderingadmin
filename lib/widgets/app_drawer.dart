@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/screens/menu_screen.dart';
 import 'package:foodorderingadmin/screens/orders_screen.dart';
+import 'package:foodorderingadmin/screens/product_screen.dart';
 import 'package:foodorderingadmin/screens/restaurant_screen.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -28,7 +28,8 @@ class AppDrawer extends StatelessWidget {
             title: Text('Menu'),
             leading: Icon(Icons.restaurant_menu),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(MenuScreen.routeName);
+              Navigator.of(context)
+                  .pushReplacementNamed(ProductScreen.routeName);
             },
           ),
           ListTile(

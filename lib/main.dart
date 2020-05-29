@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/providers/menu.dart';
 import 'package:foodorderingadmin/providers/orders.dart';
-import 'package:foodorderingadmin/screens/menu_edit_screen.dart';
-import 'package:foodorderingadmin/screens/menu_screen.dart';
+import 'package:foodorderingadmin/providers/products.dart';
+import 'package:foodorderingadmin/screens/product_edit_screen.dart';
+import 'package:foodorderingadmin/screens/product_screen.dart';
 import 'package:foodorderingadmin/screens/restaurant_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           value: Orders(),
         ),
         ChangeNotifierProvider.value(
-          value: Menu(),
+          value: Products(),
         )
       ],
       child: MaterialApp(
@@ -43,11 +43,11 @@ class MyApp extends StatelessWidget {
           // closer together (more dense) than on mobile platforms.
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: OrdersScreen.routeName,
+        initialRoute: RestaurantScreen.routeName,
         routes: {
           OrdersScreen.routeName: (context) => OrdersScreen(),
-          MenuScreen.routeName: (context) => MenuScreen(),
-          MenuEditScreen.routeName: (context) => MenuEditScreen(),
+          ProductScreen.routeName: (context) => ProductScreen(),
+          ProductEditScreen.routeName: (context) => ProductEditScreen(),
           RestaurantScreen.routeName: (context) => RestaurantScreen()
         },
       ),

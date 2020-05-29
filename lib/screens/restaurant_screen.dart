@@ -11,6 +11,7 @@ class RestaurantScreen extends StatelessWidget {
         title: Text('Restaurant'),
       ),
       drawer: AppDrawer(),
+      body: Text('My Restaurant'),
     );
   }
 }

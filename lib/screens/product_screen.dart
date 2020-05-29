@@ -1,17 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/screens/menu_edit_screen.dart';
-
 import 'package:provider/provider.dart';
 
-import '../providers/menu.dart';
+import '../screens/product_edit_screen.dart';
+import '../providers/products.dart';
 import '../widgets/app_drawer.dart';
 
-class MenuScreen extends StatelessWidget {
-  static String routeName = 'menu';
+class ProductScreen extends StatefulWidget {
+  static String routeName = 'menuproduct';
+
+  @override
+  _ProductScreenState createState() => _ProductScreenState();
+}
+
+class _ProductScreenState extends State<ProductScreen> {
+  bool _isInit = false;
+
+  @override
+  void initState() {
+    print("init called");
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!_isInit) {
+      Provider.of<Products>(context).fetchProducts();
+      _isInit = true;
+    }
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final menuData = Provider.of<Menu>(context);
+    final menuData = Provider.of<Products>(context);
     final products = menuData.items;
 
     return Scaffold(
@@ -21,8 +42,7 @@ class MenuScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(MenuEditScreen.routeName, arguments: 0);
+              Navigator.of(context).pushNamed(ProductEditScreen.routeName);
             },
           )
         ],
@@ -37,7 +57,7 @@ class MenuScreen extends StatelessWidget {
               ListTile(
                 title: Text(product.name),
                 subtitle: Text(
-                  product.price.toString(),
+                  product.category,
                   style: TextStyle(color: Colors.red),
                 ),
                 trailing: Container(
@@ -46,11 +66,18 @@ class MenuScreen extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: Icon(Icons.edit),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).pushNamed(
+                              ProductEditScreen.routeName,
+                              arguments: products[i].id);
+                        },
                       ),
                       IconButton(
                         icon: Icon(Icons.delete),
-                        onPressed: () {},
+                        onPressed: () {
+                          Provider.of<Products>(context, listen: false)
+                              .deleteProduct(products[i].id);
+                        },
                       )
                     ],
                   ),
