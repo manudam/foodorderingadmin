@@ -9,6 +9,8 @@ class Orders with ChangeNotifier {
   final _fireStore = Firestore.instance;
 
   Future<void> fetchOrders() async {
+    orders.clear();
+
     await for (var snapshot in _fireStore.collection('Orders').snapshots()) {
       for (var order in snapshot.documents) {
         var orderId = order.documentID;

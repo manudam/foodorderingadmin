@@ -16,15 +16,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
   bool _isInit = false;
 
   @override
-  void initState() {
-    Provider.of<Orders>(context).fetchOrders();
-
-    super.initState();
-  }
-
-  @override
   void didChangeDependencies() {
     if (!_isInit) {
+      Provider.of<Orders>(context).fetchOrders();
+
       _isInit = true;
     }
     super.didChangeDependencies();
