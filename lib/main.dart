@@ -1,14 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/providers/orders.dart';
-import 'package:foodorderingadmin/providers/products.dart';
-import 'package:foodorderingadmin/screens/product_edit_screen.dart';
-import 'package:foodorderingadmin/screens/product_screen.dart';
-import 'package:foodorderingadmin/screens/restaurant_screen.dart';
+
 import 'package:provider/provider.dart';
 
-import './screens/orders_screen.dart';
+import './providers/orders.dart';
+import './providers/products.dart';
+import './providers/auth.dart';
 
-void main() {
+import './screens/orders_screen.dart';
+import './screens/product_edit_screen.dart';
+import './screens/product_screen.dart';
+import './screens/restaurant_screen.dart';
+import './screens/account/account.dart';
+
+void main() async {
   runApp(MyApp());
 }
 
@@ -19,37 +24,36 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(
-          value: Orders(),
+          value: Auth(),
         ),
         ChangeNotifierProvider.value(
           value: Products(),
-        )
-      ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // Try running your application with "flutter run". You'll see the
-          // application has a blue toolbar. Then, without quitting the app, try
-          // changing the primarySwatch below to Colors.green and then invoke
-          // "hot reload" (press "r" in the console where you ran "flutter run",
-          // or simply save your changes to "hot reload" in a Flutter IDE).
-          // Notice that the counter didn't reset back to zero; the application
-          // is not restarted.
-          primarySwatch: Colors.blue,
-          // This makes the visual density adapt to the platform that you run
-          // the app on. For desktop platforms, the controls will be smaller and
-          // closer together (more dense) than on mobile platforms.
-          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: RestaurantScreen.routeName,
-        routes: {
-          OrdersScreen.routeName: (context) => OrdersScreen(),
-          ProductScreen.routeName: (context) => ProductScreen(),
-          ProductEditScreen.routeName: (context) => ProductEditScreen(),
-          RestaurantScreen.routeName: (context) => RestaurantScreen()
-        },
+        ChangeNotifierProvider.value(
+          value: Orders(),
+        ),
+      ],
+      child: Consumer<Auth>(
+        builder: (ctx, auth, _) => MaterialApp(
+          title: 'Food ordering Adming',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
+          home: FutureBuilder(
+              future: auth.isAuthenticated(),
+              builder: (ctx, snapshot) =>
+                  snapshot.hasData ? RestaurantScreen() : LoginScreen()),
+          routes: {
+            OrdersScreen.routeName: (context) => OrdersScreen(),
+            ProductScreen.routeName: (context) => ProductScreen(),
+            ProductEditScreen.routeName: (context) => ProductEditScreen(),
+            RestaurantScreen.routeName: (context) => RestaurantScreen(),
+            LoginScreen.routeName: (context) => LoginScreen(),
+            SignupScreen.routeName: (context) => SignupScreen(),
+            AccountScreen.routeName: (context) => AccountScreen()
+          },
+        ),
       ),
     );
   }

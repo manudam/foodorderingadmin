@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/screens/account/account.dart';
 import 'package:foodorderingadmin/screens/orders_screen.dart';
 import 'package:foodorderingadmin/screens/product_screen.dart';
 import 'package:foodorderingadmin/screens/restaurant_screen.dart';
@@ -38,6 +39,14 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(OrdersScreen.routeName);
+            },
+          ),
+          ListTile(
+            title: Text('Account'),
+            leading: Icon(Icons.account_box),
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(AccountScreen.routeName);
             },
           )
         ],

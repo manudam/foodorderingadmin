@@ -7,6 +7,9 @@ class Products with ChangeNotifier {
   List<Product> _products = [];
   final _databaseReference = Firestore.instance;
   final _productCollection = "Products";
+  //final String authToken;
+
+  //Products(this.authToken, this._products);
 
   List<Product> get items {
     return [..._products];
