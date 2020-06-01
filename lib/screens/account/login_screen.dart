@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('login'),
+        title: Text('Sign-in'),
       ),
       body: LoadingScreen(
         child: Form(

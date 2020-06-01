@@ -48,7 +48,8 @@ class AppDrawer extends StatelessWidget {
               Navigator.of(context)
                   .pushReplacementNamed(AccountScreen.routeName);
             },
-          )
+          ),
+          Divider(),
         ],
       ),
     );

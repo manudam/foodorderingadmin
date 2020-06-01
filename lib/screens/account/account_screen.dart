@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
+import 'package:foodorderingadmin/screens/account/login_screen.dart';
 import 'package:foodorderingadmin/widgets/app_drawer.dart';
 import 'package:foodorderingadmin/widgets/form_vertical_space.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
@@ -50,6 +51,9 @@ class _AccountScreenState extends State<AccountScreen> {
                           setState(() {
                             _loading = false;
                           });
+
+                          // Navigator.of(context)
+                          //     .pushReplacementNamed(LoginScreen.routeName);
 
                           return status;
                         });

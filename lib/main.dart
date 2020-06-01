@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
           home: FutureBuilder(
-              future: auth.isAuthenticated(),
+              future: auth.getUser,
               builder: (ctx, snapshot) =>
                   snapshot.hasData ? RestaurantScreen() : LoginScreen()),
           routes: {
