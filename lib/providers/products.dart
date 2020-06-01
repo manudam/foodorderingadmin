@@ -1,15 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/models/user.dart';
 
 import '../models/product.dart';
 
 class Products with ChangeNotifier {
   List<Product> _products = [];
   final _databaseReference = Firestore.instance;
-  final _productCollection = "Products";
-  //final String authToken;
+  final _collection = "Products";
+  Future<User> _userDetails;
 
-  //Products(this.authToken, this._products);
+  Products(this._userDetails);
 
   List<Product> get items {
     return [..._products];
@@ -19,7 +20,7 @@ class Products with ChangeNotifier {
     _products.clear();
 
     var products =
-        await _databaseReference.collection(_productCollection).getDocuments();
+        await _databaseReference.collection(_collection).getDocuments();
 
     if (products.documents.isNotEmpty) {
       for (var product in products.documents) {
@@ -41,13 +42,13 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product productToSave) async {
-    var savedProduct =
-        await _databaseReference.collection(_productCollection).add({
+    var savedProduct = await _databaseReference.collection(_collection).add({
       'name': productToSave.name,
       'description': productToSave.description,
       'category': productToSave.category,
       'price': productToSave.price,
       'isFavorite': productToSave.isFavorite,
+      'userId': await _userDetails.then((value) => value.uid),
     });
 
     productToSave.id = savedProduct.documentID;
@@ -63,10 +64,7 @@ class Products with ChangeNotifier {
   Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _products.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      await _databaseReference
-          .collection(_productCollection)
-          .document(id)
-          .updateData({
+      await _databaseReference.collection(_collection).document(id).updateData({
         'name': newProduct.name,
         'description': newProduct.description,
         'category': newProduct.category,
@@ -83,10 +81,7 @@ class Products with ChangeNotifier {
   Future<void> deleteProduct(String id) async {
     final existingProductIndex = _products.indexWhere((prod) => prod.id == id);
 
-    await _databaseReference
-        .collection(_productCollection)
-        .document(id)
-        .delete();
+    await _databaseReference.collection(_collection).document(id).delete();
 
     _products.removeAt(existingProductIndex);
     notifyListeners();

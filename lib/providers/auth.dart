@@ -7,22 +7,29 @@ import 'package:foodorderingadmin/models/user.dart';
 class Auth extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _fireStore = Firestore.instance;
+  final _collection = "Users";
 
   // Firebase user one-time fetch
   Future<FirebaseUser> get getUser => _auth.currentUser();
 
-  // Firebase user a realtime stream
-  Stream<FirebaseUser> get user => _auth.onAuthStateChanged;
-
-  //Streams the firestore user from the firestore collection
-  Stream<User> streamFirestoreUser(FirebaseUser firebaseUser) {
-    if (firebaseUser?.uid != null) {
-      return _fireStore
-          .document('/users/${firebaseUser.uid}')
-          .snapshots()
-          .map((snapshot) => User.fromMap(snapshot.data));
+  Future<FirebaseUser> getFirebaseUser() async {
+    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
+    if (firebaseUser == null) {
+      firebaseUser = await FirebaseAuth.instance.onAuthStateChanged.first;
     }
-    return null;
+    return firebaseUser;
+  }
+
+  Future<User> getUserDetails() {
+    return getUser.then((user) {
+      if (user?.uid != null) {
+        return _fireStore
+            .document('/$_collection/${user.uid}')
+            .get()
+            .then((value) => User.fromMap(value.data));
+      }
+      return null;
+    });
   }
 
   //Method to handle user sign in using email and password
@@ -73,7 +80,7 @@ class Auth extends ChangeNotifier {
   //updates the firestore users collection
   void _updateUserFirestore(User user, FirebaseUser firebaseUser) {
     _fireStore
-        .document('/users/${firebaseUser.uid}')
+        .document('/$_collection/${firebaseUser.uid}')
         .setData(user.toJson(), merge: true);
   }
 }

@@ -4,9 +4,14 @@ import 'package:foodorderingadmin/screens/orders_screen.dart';
 import 'package:foodorderingadmin/screens/product_screen.dart';
 import 'package:foodorderingadmin/screens/restaurant_screen.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   static String routeName = '/drawer';
 
+  @override
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -49,7 +54,6 @@ class AppDrawer extends StatelessWidget {
                   .pushReplacementNamed(AccountScreen.routeName);
             },
           ),
-          Divider(),
         ],
       ),
     );

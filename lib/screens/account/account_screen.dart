@@ -34,7 +34,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   FutureBuilder(
-                    future: _auth.getUser,
+                    future: _auth.getFirebaseUser(),
                     builder: (ctx, snapshot) => snapshot.hasData
                         ? Text("Logged in as ${snapshot.data.email}")
                         : Text("Not Logged in"),

@@ -26,8 +26,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProvider.value(
-          value: Products(),
+        ChangeNotifierProxyProvider<Auth, Products>(
+          create: null,
+          update: (ctx, auth, previousProducts) =>
+              Products(auth.getUserDetails()),
         ),
         ChangeNotifierProvider.value(
           value: Orders(),
@@ -35,15 +37,17 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
-          title: 'Food ordering Adming',
+          title: 'Food ordering Admin',
           theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
           ),
+          //home: RestaurantScreen(),
           home: FutureBuilder(
-              future: auth.getUser,
-              builder: (ctx, snapshot) =>
-                  snapshot.hasData ? RestaurantScreen() : LoginScreen()),
+              future: auth.getFirebaseUser(),
+              builder: (ctx, snapshot) => (snapshot?.data?.uid != null)
+                  ? RestaurantScreen()
+                  : LoginScreen()),
           routes: {
             OrdersScreen.routeName: (context) => OrdersScreen(),
             ProductScreen.routeName: (context) => ProductScreen(),
