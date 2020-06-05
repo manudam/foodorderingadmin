@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../screens/product_edit_screen.dart';
-import '../providers/products.dart';
+import 'product_edit_screen.dart';
+import '../providers/auth.dart';
 import '../widgets/app_drawer.dart';
+import '../providers/products.dart';
 
 class ProductScreen extends StatefulWidget {
-  static String routeName = 'menuproduct';
+  static String routeName = 'product';
 
   @override
   _ProductScreenState createState() => _ProductScreenState();
@@ -24,7 +25,9 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   void didChangeDependencies() {
     if (!_isInit) {
-      Provider.of<Products>(context).fetchProducts();
+      var loggedInUser = Provider.of<Auth>(context, listen: false).loggedInUser;
+      Provider.of<Products>(context, listen: false)
+          .fetchProducts(loggedInUser.restaurantId);
       _isInit = true;
     }
     super.didChangeDependencies();
@@ -34,6 +37,7 @@ class _ProductScreenState extends State<ProductScreen> {
   Widget build(BuildContext context) {
     final menuData = Provider.of<Products>(context);
     final products = menuData.items;
+    final loggedInUser = Provider.of<Auth>(context).loggedInUser;
 
     return Scaffold(
       appBar: AppBar(
@@ -76,7 +80,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         icon: Icon(Icons.delete),
                         onPressed: () {
                           Provider.of<Products>(context, listen: false)
-                              .deleteProduct(products[i].id);
+                              .deleteProduct(products[i].id, loggedInUser);
                         },
                       )
                     ],

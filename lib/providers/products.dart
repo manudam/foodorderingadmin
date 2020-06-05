@@ -1,37 +1,35 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/models/user.dart';
 
-import '../models/product.dart';
+import '../models/models.dart';
+import '../helpers/helpers.dart';
 
 class Products with ChangeNotifier {
   List<Product> _products = [];
   final _databaseReference = Firestore.instance;
-  final _collection = "Products";
-  Future<User> _userDetails;
-
-  Products(this._userDetails);
 
   List<Product> get items {
     return [..._products];
   }
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchProducts(String restaurantId) async {
     _products.clear();
 
-    var products =
-        await _databaseReference.collection(_collection).getDocuments();
+    var documents = await _databaseReference
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(restaurantId)
+        .collection(DatabaseCollectionNames.products)
+        .getDocuments();
 
-    if (products.documents.isNotEmpty) {
-      for (var product in products.documents) {
-        _products.add(Product(
-            id: product.documentID,
-            name: product.data['name'],
-            description: product.data['description'],
-            isFavorite: product.data['isFavorite'],
-            price: product.data['price'],
-            category: product.data['category']));
-      }
+    for (var document in documents.documents) {
+      print(document.data);
+      _products.add(Product(
+        name: document.data["name"],
+        id: document.documentID,
+        category: document.data["category"],
+        price: document.data["price"],
+        description: document.data["description"],
+      ));
     }
 
     notifyListeners();
@@ -41,14 +39,16 @@ class Products with ChangeNotifier {
     return items.firstWhere((element) => element.id == productId);
   }
 
-  Future<void> addProduct(Product productToSave) async {
-    var savedProduct = await _databaseReference.collection(_collection).add({
+  Future<void> addProduct(Product productToSave, User loggedInUser) async {
+    var savedProduct = await _databaseReference
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(loggedInUser.restaurantId)
+        .collection(DatabaseCollectionNames.products)
+        .add({
       'name': productToSave.name,
       'description': productToSave.description,
       'category': productToSave.category,
       'price': productToSave.price,
-      'isFavorite': productToSave.isFavorite,
-      'userId': await _userDetails.then((value) => value.uid),
     });
 
     productToSave.id = savedProduct.documentID;
@@ -61,15 +61,20 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateProduct(String id, Product newProduct) async {
+  Future<void> updateProduct(
+      String id, Product newProduct, User loggedInUser) async {
     final prodIndex = _products.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      await _databaseReference.collection(_collection).document(id).updateData({
+      await _databaseReference
+          .collection(DatabaseCollectionNames.restaurants)
+          .document(loggedInUser.restaurantId)
+          .collection(DatabaseCollectionNames.products)
+          .document(id)
+          .updateData({
         'name': newProduct.name,
         'description': newProduct.description,
         'category': newProduct.category,
         'price': newProduct.price,
-        'isFavorite': newProduct.isFavorite,
       });
 
       notifyListeners();
@@ -78,10 +83,15 @@ class Products with ChangeNotifier {
     }
   }
 
-  Future<void> deleteProduct(String id) async {
+  Future<void> deleteProduct(String id, User loggedInUser) async {
     final existingProductIndex = _products.indexWhere((prod) => prod.id == id);
 
-    await _databaseReference.collection(_collection).document(id).delete();
+    await _databaseReference
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(loggedInUser.restaurantId)
+        .collection(DatabaseCollectionNames.products)
+        .document(id)
+        .delete();
 
     _products.removeAt(existingProductIndex);
     notifyListeners();

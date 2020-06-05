@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/screens/account/account.dart';
-import 'package:foodorderingadmin/screens/orders_screen.dart';
-import 'package:foodorderingadmin/screens/product_screen.dart';
-import 'package:foodorderingadmin/screens/restaurant_screen.dart';
+import 'package:foodorderingadmin/providers/auth.dart';
+import 'package:provider/provider.dart';
+
+import '../screens/account/account.dart';
+import '../screens/live_orders_screen.dart';
+import '../screens/product_screen.dart';
 
 class AppDrawer extends StatefulWidget {
   static String routeName = '/drawer';
@@ -12,6 +14,18 @@ class AppDrawer extends StatefulWidget {
 }
 
 class _AppDrawerState extends State<AppDrawer> {
+  bool _isInit = false;
+
+  @override
+  void didChangeDependencies() async {
+    if (!_isInit) {
+      await Provider.of<Auth>(context).fetchUserDetails();
+
+      _isInit = true;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -23,15 +37,7 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
           Divider(),
           ListTile(
-            title: Text('Restaurant'),
-            leading: Icon(Icons.restaurant),
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(RestaurantScreen.routeName);
-            },
-          ),
-          ListTile(
-            title: Text('Menu'),
+            title: Text('Edit Menu'),
             leading: Icon(Icons.restaurant_menu),
             onTap: () {
               Navigator.of(context)
@@ -39,11 +45,11 @@ class _AppDrawerState extends State<AppDrawer> {
             },
           ),
           ListTile(
-            title: Text('Orders'),
+            title: Text('Live Orders'),
             leading: Icon(Icons.speaker_notes),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(OrdersScreen.routeName);
+                  .pushReplacementNamed(LiveOrdersScreen.routeName);
             },
           ),
           ListTile(

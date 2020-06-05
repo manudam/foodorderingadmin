@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:foodorderingadmin/models/user.dart';
+
+import '../models/user.dart';
 
 class Auth extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _fireStore = Firestore.instance;
   final _collection = "Users";
+
+  User loggedInUser;
 
   // Firebase user one-time fetch
   Future<FirebaseUser> get getUser => _auth.currentUser();
@@ -20,23 +22,26 @@ class Auth extends ChangeNotifier {
     return firebaseUser;
   }
 
-  Future<User> getUserDetails() {
-    return getUser.then((user) {
+  Future<User> fetchUserDetails() async {
+    if (loggedInUser == null) {
+      var user = await getUser;
       if (user?.uid != null) {
-        return _fireStore
-            .document('/$_collection/${user.uid}')
-            .get()
-            .then((value) => User.fromMap(value.data));
+        var document =
+            await _fireStore.document('/$_collection/${user.uid}').get();
+
+        loggedInUser = User.fromMap(document.data);
       }
-      return null;
-    });
+    }
+
+    return loggedInUser;
   }
 
   //Method to handle user sign in using email and password
   Future<bool> login(String email, String password) async {
     try {
+      loggedInUser = null;
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-
+      await fetchUserDetails();
       notifyListeners();
       return true;
     } catch (e) {
@@ -59,6 +64,9 @@ class Auth extends ChangeNotifier {
         _updateUserFirestore(newUser, value.user);
       });
 
+      await fetchUserDetails();
+      notifyListeners();
+
       return true;
     } catch (e) {
       return false;
@@ -69,7 +77,6 @@ class Auth extends ChangeNotifier {
   Future<bool> signOut() async {
     try {
       await _auth.signOut();
-      var user = await getUser;
       notifyListeners();
       return true;
     } catch (e) {

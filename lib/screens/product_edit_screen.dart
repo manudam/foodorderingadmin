@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/providers/products.dart';
 import 'package:provider/provider.dart';
-import 'package:foodorderingadmin/models/product.dart';
+
+import '../providers/auth.dart';
+import '../providers/products.dart';
+import '../models/models.dart';
 
 class ProductEditScreen extends StatefulWidget {
-  static String routeName = 'menuproductedit';
+  static String routeName = 'productedit';
 
   @override
   _ProductEditScreenState createState() => _ProductEditScreenState();
@@ -61,6 +63,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   }
 
   void _saveForm() {
+    final loggedInUser = Provider.of<Auth>(context, listen: false).loggedInUser;
+
     final isValid = _form.currentState.validate();
     if (!isValid) {
       return;
@@ -68,9 +72,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     _form.currentState.save();
     if (_editedProduct.id != null) {
       Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
+          .updateProduct(_editedProduct.id, _editedProduct, loggedInUser);
     } else {
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      Provider.of<Products>(context, listen: false)
+          .addProduct(_editedProduct, loggedInUser);
     }
     Navigator.of(context).pop();
   }
@@ -115,8 +120,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                             price: _editedProduct.price,
                             description: _editedProduct.description,
                             category: _editedProduct.category,
-                            id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite);
+                            id: _editedProduct.id);
                       },
                     ),
                     TextFormField(
@@ -147,8 +151,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                             price: double.parse(value),
                             description: _editedProduct.description,
                             category: _editedProduct.category,
-                            id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite);
+                            id: _editedProduct.id);
                       },
                     ),
                     TextFormField(
@@ -177,7 +180,6 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                           description: value,
                           category: _editedProduct.category,
                           id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                     ),
@@ -202,7 +204,6 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                           description: _editedProduct.description,
                           category: value,
                           id: _editedProduct.id,
-                          isFavorite: _editedProduct.isFavorite,
                         );
                       },
                     ),

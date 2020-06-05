@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/screens/account/login_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth.dart';
 import '../../widgets/form_widgets.dart';
+import 'account.dart';
 
 class SignupScreen extends StatefulWidget {
   static const routeName = "signup";
@@ -105,7 +105,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     LabelButton(
                       labelText: 'Sign-in instead',
                       onPressed: () => Navigator.pushReplacementNamed(
-                          context, LoginScreen.routeName),
+                          context, SigninScreen.routeName),
                     ),
                   ],
                 ),

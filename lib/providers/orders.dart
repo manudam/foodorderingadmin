@@ -1,17 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:foodorderingadmin/models/cart_item.dart';
 
-import '../models/order_item.dart';
+import '../helpers/database_collection_names.dart';
+import '../models/models.dart';
 
 class Orders with ChangeNotifier {
   List<OrderItem> _orders = [];
   final _fireStore = Firestore.instance;
 
-  Future<void> fetchOrders() async {
-    orders.clear();
+  List<OrderItem> get orders {
+    return [..._orders];
+  }
 
-    await for (var snapshot in _fireStore.collection('Orders').snapshots()) {
+  Future<void> fetchOrders(User loggedinUser) async {
+    _orders.clear();
+
+    await for (var snapshot in _fireStore
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(loggedinUser.restaurantId)
+        .collection(DatabaseCollectionNames.orders)
+        .snapshots()) {
       for (var order in snapshot.documents) {
         var orderId = order.documentID;
 
@@ -39,9 +47,5 @@ class Orders with ChangeNotifier {
       }
       notifyListeners();
     }
-  }
-
-  List<OrderItem> get orders {
-    return [..._orders];
   }
 }

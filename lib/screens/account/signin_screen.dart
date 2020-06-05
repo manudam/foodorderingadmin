@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
 import 'package:foodorderingadmin/screens/account/account.dart';
-import 'package:foodorderingadmin/screens/restaurant_screen.dart';
 import 'package:foodorderingadmin/widgets/form_input_field_with_icon.dart';
 import 'package:foodorderingadmin/widgets/form_vertical_space.dart';
 import 'package:foodorderingadmin/widgets/label_button.dart';
@@ -9,14 +8,14 @@ import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:foodorderingadmin/widgets/primary_button.dart';
 import 'package:provider/provider.dart';
 
-class LoginScreen extends StatefulWidget {
+class SigninScreen extends StatefulWidget {
   static const routeName = "login";
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SigninScreenState createState() => _SigninScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SigninScreenState extends State<SigninScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = new TextEditingController();
   final TextEditingController _password = new TextEditingController();

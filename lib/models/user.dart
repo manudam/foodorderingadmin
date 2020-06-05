@@ -2,19 +2,23 @@ class User {
   String uid;
   String email;
   String name;
-  bool isAdmin;
+  String restaurantId;
 
-  User({this.uid, this.email, this.name, this.isAdmin});
+  User({this.uid, this.email, this.name, this.restaurantId});
 
   factory User.fromMap(Map data) {
     return User(
       uid: data['uid'],
       email: data['email'] ?? '',
       name: data['name'] ?? '',
-      isAdmin: data['isAdmin'] ?? '',
+      restaurantId: data['restaurantId'] ?? '',
     );
   }
 
-  Map<String, dynamic> toJson() =>
-      {"uid": uid, "email": email, "name": name, 'isAdmin': isAdmin};
+  Map<String, dynamic> toJson() => {
+        "uid": uid,
+        "email": email,
+        "name": name,
+        "restaurantId": restaurantId,
+      };
 }

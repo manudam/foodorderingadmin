@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/widgets/app_drawer.dart';
-import 'package:foodorderingadmin/widgets/order_item.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/orders.dart';
+import '../providers/auth.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/order_item.dart';
 
-class OrdersScreen extends StatefulWidget {
-  static const routeName = "/orders";
+class LiveOrdersScreen extends StatefulWidget {
+  static const routeName = "liveorders";
 
   @override
-  _OrdersScreenState createState() => _OrdersScreenState();
+  _LiveOrdersScreenScreenState createState() => _LiveOrdersScreenScreenState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
   bool _isInit = false;
 
   @override
   void didChangeDependencies() {
     if (!_isInit) {
-      Provider.of<Orders>(context).fetchOrders();
+      var loggedInUser = Provider.of<Auth>(context).loggedInUser;
+      Provider.of<Orders>(context).fetchOrders(loggedInUser);
 
       _isInit = true;
     }
