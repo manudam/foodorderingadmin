@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
-import 'package:foodorderingadmin/widgets/app_drawer.dart';
 import 'package:foodorderingadmin/widgets/form_vertical_space.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:foodorderingadmin/widgets/primary_button.dart';
@@ -22,9 +21,8 @@ class _AccountScreenState extends State<AccountScreen> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text('My account'),
+          title: Text('Accounts'),
         ),
-        drawer: AppDrawer(),
         body: LoadingScreen(
           child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 10),
@@ -38,6 +36,9 @@ class _AccountScreenState extends State<AccountScreen> {
                         ? Text("Logged in as ${snapshot.data.email}")
                         : Text("Not Logged in"),
                   ),
+                  FormVerticalSpace(),
+                  PrimaryButton(
+                      labelText: "Create users", onPressed: () async {}),
                   FormVerticalSpace(),
                   PrimaryButton(
                       labelText: "Sign-out",

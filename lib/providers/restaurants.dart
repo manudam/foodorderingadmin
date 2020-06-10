@@ -8,14 +8,22 @@ class Restaurants with ChangeNotifier {
   final _databaseReference = Firestore.instance;
   Restaurant restaurant;
 
-  Future<void> fetchUserRestaurant(User loggedinUser) async {
+  Future<void> fetchRestaurantDetails(String restaurantId) async {
     var restaurantDoc = await _databaseReference
         .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedinUser.restaurantId)
+        .document(restaurantId)
         .get();
 
-    restaurant =
-        Restaurant.fromMap(loggedinUser.restaurantId, restaurantDoc.data);
+    restaurant = Restaurant.fromMap(restaurantId, restaurantDoc.data);
+
+    notifyListeners();
+  }
+
+  void saveRestaurant(Restaurant restaurant) async {
+    await _databaseReference
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(restaurant.id)
+        .updateData(restaurant.toJson());
 
     notifyListeners();
   }

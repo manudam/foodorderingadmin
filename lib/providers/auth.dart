@@ -30,6 +30,8 @@ class Auth extends ChangeNotifier {
             await _fireStore.document('/$_collection/${user.uid}').get();
 
         loggedInUser = User.fromMap(document.data);
+
+        notifyListeners();
       }
     }
 

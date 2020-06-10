@@ -23,13 +23,7 @@ class Products with ChangeNotifier {
 
     for (var document in documents.documents) {
       print(document.data);
-      _products.add(Product(
-        name: document.data["name"],
-        id: document.documentID,
-        category: document.data["category"],
-        price: document.data["price"],
-        description: document.data["description"],
-      ));
+      _products.add(Product.fromMap(document.documentID, document.data));
     }
 
     notifyListeners();
@@ -44,12 +38,7 @@ class Products with ChangeNotifier {
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedInUser.restaurantId)
         .collection(DatabaseCollectionNames.products)
-        .add({
-      'name': productToSave.name,
-      'description': productToSave.description,
-      'category': productToSave.category,
-      'price': productToSave.price,
-    });
+        .add(productToSave.toJson());
 
     productToSave.id = savedProduct.documentID;
 
@@ -62,7 +51,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> updateProduct(
-      String id, Product newProduct, User loggedInUser) async {
+      String id, Product updatedProduct, User loggedInUser) async {
     final prodIndex = _products.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       await _databaseReference
@@ -70,12 +59,9 @@ class Products with ChangeNotifier {
           .document(loggedInUser.restaurantId)
           .collection(DatabaseCollectionNames.products)
           .document(id)
-          .updateData({
-        'name': newProduct.name,
-        'description': newProduct.description,
-        'category': newProduct.category,
-        'price': newProduct.price,
-      });
+          .updateData(updatedProduct.toJson());
+
+      _products[prodIndex] = updatedProduct;
 
       notifyListeners();
     } else {
