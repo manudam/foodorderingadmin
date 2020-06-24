@@ -29,20 +29,7 @@ class Orders with ChangeNotifier {
         print(order.data);
 
         if (!orderExists) {
-          _orders.add(OrderItem(
-              id: orderId,
-              amount: order.data['amount'],
-              dateTime: DateTime.parse(order.data['dateTime']),
-              products: (order.data['products'] as List<dynamic>)
-                  .map(
-                    (item) => CartItem(
-                      id: item['id'],
-                      price: item['price'],
-                      quantity: item['quantity'],
-                      title: item['title'],
-                    ),
-                  )
-                  .toList()));
+          _orders.add(OrderItem.fromMap(order.documentID, order.data));
         }
       }
       notifyListeners();
