@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^0.5.7+3
   simple_gravatar: ^1.0.5
   enum_to_string: ^1.0.9
+  timeago: ^2.0.26
 
 dev_dependencies:
   flutter_test:

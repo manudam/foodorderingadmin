@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/models/restaurant.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
-import 'package:foodorderingadmin/screens/opening_times_edit_screen.dart';
-import 'package:foodorderingadmin/screens/opening_times_screen.dart';
 
 import 'package:provider/provider.dart';
 
 import './providers/orders.dart';
-import './providers/products.dart';
+import './providers/menu.dart';
 import './providers/auth.dart';
 
 import './screens/screens.dart';
@@ -26,7 +23,7 @@ class MyApp extends StatelessWidget {
           value: Auth(),
         ),
         ChangeNotifierProvider.value(
-          value: Products(),
+          value: Menu(),
         ),
         ChangeNotifierProvider.value(
           value: Restaurants(),
@@ -47,14 +44,10 @@ class MyApp extends StatelessWidget {
               future: auth.fetchUserDetails(),
               builder: (ctx, snapshot) =>
                   snapshot.hasData && snapshot.data?.restaurantId != null
-                      ? AdminScreen()
+                      ? LiveOrdersScreen()
                       : SigninScreen()),
           routes: {
-            AdminScreen.routeName: (context) => AdminScreen(),
-            OpeningTimesScreen.routeName: (context) => OpeningTimesScreen(),
-            OpeningTimesEditScreen.routeName: (context) =>
-                OpeningTimesEditScreen(),
-            ProductScreen.routeName: (context) => ProductScreen(),
+            LiveMenuEditScreen.routeName: (context) => LiveMenuEditScreen(),
             ProductEditScreen.routeName: (context) => ProductEditScreen(),
             SigninScreen.routeName: (context) => SigninScreen(),
             SignupScreen.routeName: (context) => SignupScreen(),

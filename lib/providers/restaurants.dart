@@ -16,6 +16,9 @@ class Restaurants with ChangeNotifier {
 
     restaurant = Restaurant.fromMap(restaurantId, restaurantDoc.data);
 
+    print("Restaurant fetched");
+    print(restaurantDoc.data);
+
     notifyListeners();
   }
 

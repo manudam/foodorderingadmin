@@ -4,15 +4,22 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../helpers/helpers.dart';
 
-class Products with ChangeNotifier {
-  List<Product> _products = [];
+class Menu with ChangeNotifier {
   final _databaseReference = Firestore.instance;
+
+  List<Product> _products = [];
+  List<String> _categories = [];
+  String selectedCategory = '';
 
   List<Product> get items {
     return [..._products];
   }
 
-  Future<void> fetchProducts(String restaurantId) async {
+  List<String> get categories {
+    return [..._categories];
+  }
+
+  Future<void> fetchMenu(String restaurantId) async {
     _products.clear();
 
     var documents = await _databaseReference
@@ -26,11 +33,31 @@ class Products with ChangeNotifier {
       _products.add(Product.fromMap(document.documentID, document.data));
     }
 
+    populateCategories();
+
     notifyListeners();
   }
 
   Product findById(String productId) {
     return items.firstWhere((element) => element.id == productId);
+  }
+
+  List<Product> findByCategory(String category) {
+    //return items.where((element) => element.category == category).toList();
+    return items;
+  }
+
+  void populateCategories() {
+    _categories.clear();
+    _categories = items.map((e) => e.category).toSet().toList();
+    if (_categories.length > 0) {
+      selectedCategory = _categories[0];
+    }
+  }
+
+  void selectCategory(String category) {
+    selectedCategory = category;
+    notifyListeners();
   }
 
   Future<void> addProduct(Product productToSave, User loggedInUser) async {

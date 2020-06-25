@@ -1,5 +1,6 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
+
 import 'payment_details.dart';
 
 import 'cart_item.dart';
@@ -37,8 +38,9 @@ class OrderItem {
         subTotal: data['subTotal'],
         tip: data['tip'],
         dateTime: DateTime.parse(data['dateTime']),
-        orderStatus: EnumToString.fromString(
-            OrderStatus.values, data['orderStatus'] ?? ''),
+        orderStatus: data['orderStatus'] != null
+            ? EnumToString.fromString(OrderStatus.values, data['orderStatus'])
+            : null,
         tableNumber: data['tableNumber'] ?? '',
         notes: data['notes'] ?? '',
         restaurantId: data['restaurantId'] ?? '',
@@ -49,10 +51,13 @@ class OrderItem {
                   price: item['price'],
                   quantity: item['quantity'],
                   title: item['title'],
-                  notes: item['notes']),
+                  notes: item['notes'],
+                  category: item['category']),
             )
             .toList(),
-        paymentDetails: PaymentDetails.fromMap(data["paymentDetails"]));
+        paymentDetails: data["paymentDetails"] != null
+            ? PaymentDetails.fromMap(data["paymentDetails"])
+            : null);
   }
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +80,26 @@ class OrderItem {
             .toList(),
         'paymentDetails': paymentDetails.toJson()
       };
+
+  bool get orderLate =>
+      DateTime.now().difference(dateTime).inMinutes > 5 ? true : false;
+
+  Map<String, int> categoryItemCount() {
+    var categoryList = this.products.map((e) => e.category).toList();
+    var categoryItemCount = Map<String, int>();
+
+    categoryList.forEach((element) {
+      if (!categoryItemCount.containsKey(element)) {
+        categoryItemCount[element] = 1;
+      } else {
+        categoryItemCount[element] += 1;
+      }
+    });
+
+    print(categoryItemCount);
+
+    return categoryItemCount;
+  }
 }
 
-enum OrderStatus { AwaitingConfirmation, Completed }
+enum OrderStatus { AwaitingConfirmation, Ready }

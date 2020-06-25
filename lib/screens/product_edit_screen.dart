@@ -3,7 +3,7 @@ import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth.dart';
-import '../providers/products.dart';
+import '../providers/menu.dart';
 import '../models/models.dart';
 
 class ProductEditScreen extends StatefulWidget {
@@ -46,7 +46,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
       final productId = ModalRoute.of(context).settings.arguments as String;
       if (productId != null) {
         _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+            Provider.of<Menu>(context, listen: false).findById(productId);
         _initValues = {
           'name': _editedProduct.name,
           'description': _editedProduct.description,
@@ -85,10 +85,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
       }
       _form.currentState.save();
       if (_editedProduct.id != null) {
-        Provider.of<Products>(context, listen: false)
+        Provider.of<Menu>(context, listen: false)
             .updateProduct(_editedProduct.id, _editedProduct, loggedInUser);
       } else {
-        Provider.of<Products>(context, listen: false)
+        Provider.of<Menu>(context, listen: false)
             .addProduct(_editedProduct, loggedInUser);
       }
       Navigator.of(context).pop();

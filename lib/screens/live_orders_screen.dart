@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 
+import 'package:foodorderingadmin/helpers/constants.dart';
+import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
 import '../providers/orders.dart';
 import '../providers/auth.dart';
 import '../widgets/app_drawer.dart';
@@ -32,13 +35,20 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
     final orders = Provider.of<Orders>(context).orders;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Orders"),
+      appBar: BaseAppBar(
+        title: "Orders (${orders.length})",
+        backgroundColor: kGreyBackground,
+        textColor: Colors.white,
+        appBar: AppBar(),
       ),
       drawer: AppDrawer(),
-      body: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (ctx, i) => OrderItem(orders[i]),
+      body: Container(
+        color: kGreyBackground,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: orders.length,
+          itemBuilder: (ctx, i) => OrderItem(orders[i]),
+        ),
       ),
     );
   }
