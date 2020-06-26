@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
+import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
 import 'package:foodorderingadmin/providers/orders.dart';
 import 'package:foodorderingadmin/widgets/transaction_details.dart';
@@ -47,6 +48,8 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                     Provider.of<Auth>(context, listen: false).loggedInUser;
                 await Provider.of<Orders>(context, listen: false)
                     .acceptOrder(widget.order, loggedInUser);
+                await Provider.of<Analytics>(context, listen: false)
+                    .updateDayOrderAnalytic(widget.order, loggedInUser);
                 Navigator.of(context).pop();
               },
             ),

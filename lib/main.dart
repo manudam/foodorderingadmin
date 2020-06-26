@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
 
 import 'package:provider/provider.dart';
@@ -30,6 +31,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: Orders(),
+        ),
+        ChangeNotifierProvider.value(
+          value: Analytics(),
         ),
       ],
       child: Consumer<Auth>(

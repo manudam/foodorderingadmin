@@ -25,10 +25,13 @@ class Orders with ChangeNotifier {
   Future<void> streamLiveOrders(User loggedinUser) async {
     _liveOrders.clear();
 
+    var yesterday = DateTime.now().add(Duration(days: -1));
+
     _liveOrdersListerer = _fireStore
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
+        .where("orderDate", isGreaterThan: yesterday)
         .snapshots()
         .listen((orders) {
       for (var order in orders.documents) {
@@ -66,8 +69,6 @@ class Orders with ChangeNotifier {
     _acceptedOrders.clear();
 
     var yesterday = DateTime.now().add(Duration(days: -1));
-
-    print(yesterday);
 
     _acceptedOrdersListerer = _fireStore
         .collection(DatabaseCollectionNames.restaurants)

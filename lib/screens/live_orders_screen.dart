@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:provider/provider.dart';
 
 import 'package:foodorderingadmin/helpers/constants.dart';
@@ -24,6 +25,8 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
     if (!_isInit) {
       var loggedInUser = Provider.of<Auth>(context).loggedInUser;
       Provider.of<Orders>(context).streamLiveOrders(loggedInUser);
+      Provider.of<Analytics>(context, listen: false)
+          .fetchAnalytics(loggedInUser);
 
       _isInit = true;
     }

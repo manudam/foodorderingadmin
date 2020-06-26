@@ -45,7 +45,7 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: "Orders Accepted",
+        title: "Archive",
         backgroundColor: kLightGreyBackground,
         textColor: Colors.black,
         appBar: AppBar(),
