@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
+import 'package:foodorderingadmin/providers/auth.dart';
+import 'package:foodorderingadmin/providers/orders.dart';
+import 'package:foodorderingadmin/widgets/transaction_details.dart';
+import 'package:provider/provider.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../models/order_item.dart' as ord;
 
-class OrderItem extends StatefulWidget {
+class LiveOrderItem extends StatefulWidget {
   final ord.OrderItem order;
 
-  OrderItem(this.order);
+  LiveOrderItem(this.order);
 
   @override
-  _OrderItemState createState() => _OrderItemState();
+  _LiveOrderItemState createState() => _LiveOrderItemState();
 }
 
-class _OrderItemState extends State<OrderItem> {
+class _LiveOrderItemState extends State<LiveOrderItem> {
   Future<void> _showMyDialog() async {
     var categoryItemCount = widget.order.categoryItemCount();
     List<Widget> items = [];
@@ -38,7 +42,11 @@ class _OrderItemState extends State<OrderItem> {
             MaterialButton(
               child: Text('Confirm', style: TextStyle(color: Colors.white)),
               color: widget.order.orderLate ? Colors.red : Colors.yellow,
-              onPressed: () {
+              onPressed: () async {
+                final loggedInUser =
+                    Provider.of<Auth>(context, listen: false).loggedInUser;
+                await Provider.of<Orders>(context, listen: false)
+                    .acceptOrder(widget.order, loggedInUser);
                 Navigator.of(context).pop();
               },
             ),
@@ -61,21 +69,7 @@ class _OrderItemState extends State<OrderItem> {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: [
-                Text(
-                    "Name given: ${widget.order.paymentDetails.cardHolderName}"),
-                Text("Email: ${widget.order.paymentDetails.receiptEmail}"),
-                Text("Order ID: ${widget.order.id}"),
-                Text(
-                    "Stripe transaction ID: ${widget.order.paymentDetails.paymentMethodId}"),
-                Text("Sub Total: £${widget.order.subTotal.toStringAsFixed(2)}"),
-                Text("Tip: £${widget.order.tip.toStringAsFixed(2)}"),
-                Text("Total paid: £${widget.order.total.toStringAsFixed(2)}"),
-              ],
-            ),
-          ),
+          content: TransactionDetails(widget.order),
         );
       },
     );
@@ -83,6 +77,8 @@ class _OrderItemState extends State<OrderItem> {
 
   @override
   Widget build(BuildContext context) {
+    String category = "";
+
     return Container(
       margin: EdgeInsets.only(left: 20, right: 10, top: 10),
       child: Column(
@@ -93,7 +89,7 @@ class _OrderItemState extends State<OrderItem> {
             style: kWhiteTitle,
           ),
           Text(
-            timeago.format(widget.order.dateTime),
+            timeago.format(widget.order.orderDate),
             style: widget.order.orderLate ? kRedSubTitle : kWhiteSubTitle,
           ),
           SizedBox(
@@ -102,7 +98,7 @@ class _OrderItemState extends State<OrderItem> {
           Card(
             child: Container(
               padding: EdgeInsets.all(20),
-              width: 250,
+              width: 280,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -112,27 +108,46 @@ class _OrderItemState extends State<OrderItem> {
                   ),
                   Container(
                     height:
-                        (50 + (widget.order.products.length * 20)).toDouble(),
+                        (50 + (widget.order.products.length * 30)).toDouble(),
                     child: ListView.builder(
                         itemCount: widget.order.products.length,
                         itemBuilder: (ctx, i) {
+                          bool newCategory = false;
                           var product = widget.order.products[i];
-                          return Row(
-                            children: [
-                              Text(
-                                "${product.quantity.toString()} ${product.title}",
-                                style: kMediumText,
-                              ),
-                              Text(
-                                product.notes != null || product.notes != ''
-                                    ? "(${product.notes})"
-                                    : "",
-                                style: kGreySubTitle,
-                              )
-                            ],
+                          if (product.category != category) {
+                            newCategory = true;
+                            category = product.category;
+                          }
+                          return Padding(
+                            padding: EdgeInsets.only(
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: newCategory ? 20 : 0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  "${product.quantity.toString()} ${product.title}",
+                                ),
+                                Text(
+                                  product.notes.isNotEmpty
+                                      ? "(${product.notes})"
+                                      : "",
+                                  style: TextStyle(color: Colors.grey),
+                                )
+                              ],
+                            ),
                           );
                         }),
                   ),
+                  if (widget.order.notes != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Text(
+                        widget.order.notes,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
                   Align(
                     alignment: Alignment.center,
                     child: MaterialButton(

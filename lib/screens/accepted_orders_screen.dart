@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:provider/provider.dart';
 
 import 'package:foodorderingadmin/helpers/constants.dart';
@@ -7,23 +8,24 @@ import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
 import '../providers/orders.dart';
 import '../providers/auth.dart';
 import '../widgets/app_drawer.dart';
-import '../widgets/live_order_item.dart';
+import '../widgets/accepted_order_item.dart';
 
-class LiveOrdersScreen extends StatefulWidget {
-  static const routeName = "liveorders";
+class AcceptedOrdersScreen extends StatefulWidget {
+  static const routeName = "acceptedorders";
 
   @override
-  _LiveOrdersScreenScreenState createState() => _LiveOrdersScreenScreenState();
+  _AcceptedOrdersScreenScreenState createState() =>
+      _AcceptedOrdersScreenScreenState();
 }
 
-class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
+class _AcceptedOrdersScreenScreenState extends State<AcceptedOrdersScreen> {
   bool _isInit = false;
 
   @override
   void didChangeDependencies() {
     if (!_isInit) {
       var loggedInUser = Provider.of<Auth>(context).loggedInUser;
-      Provider.of<Orders>(context).streamLiveOrders(loggedInUser);
+      Provider.of<Orders>(context).streamAcceptedOrders(loggedInUser);
 
       _isInit = true;
     }
@@ -32,29 +34,29 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
 
   // @override
   // void dispose() {
-  //   Provider.of<Orders>(context, listen: false).unstreamLiveOrders();
+  //   Provider.of<Orders>(context, listen: false).unstreamAcceptedOrders();
 
   //   super.dispose();
   // }
 
   @override
   Widget build(BuildContext context) {
-    final orders = Provider.of<Orders>(context).liveOrders;
+    final orders = Provider.of<Orders>(context).acceptedOrders;
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: "Orders (${orders.length})",
-        backgroundColor: kGreyBackground,
-        textColor: Colors.white,
+        title: "Orders Accepted",
+        backgroundColor: kLightGreyBackground,
+        textColor: Colors.black,
         appBar: AppBar(),
       ),
       drawer: AppDrawer(),
       body: Container(
-        color: kGreyBackground,
+        color: kLightGreyBackground,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: orders.length,
-          itemBuilder: (ctx, i) => LiveOrderItem(orders[i]),
+          itemBuilder: (ctx, i) => AcceptedOrderItem(orders[i]),
         ),
       ),
     );

@@ -21,13 +21,4 @@ class Restaurants with ChangeNotifier {
 
     notifyListeners();
   }
-
-  void saveRestaurant(Restaurant restaurant) async {
-    await _databaseReference
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(restaurant.id)
-        .updateData(restaurant.toJson());
-
-    notifyListeners();
-  }
 }

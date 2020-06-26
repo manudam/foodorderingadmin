@@ -52,7 +52,9 @@ class MyApp extends StatelessWidget {
             SigninScreen.routeName: (context) => SigninScreen(),
             SignupScreen.routeName: (context) => SignupScreen(),
             AccountScreen.routeName: (context) => AccountScreen(),
-            LiveOrdersScreen.routeName: (context) => LiveOrdersScreen()
+            LiveOrdersScreen.routeName: (context) => LiveOrdersScreen(),
+            AcceptedOrdersScreen.routeName: (context) => AcceptedOrdersScreen(),
+            ArchiveOrdersScreen.routeName: (context) => ArchiveOrdersScreen(),
           },
         ),
       ),

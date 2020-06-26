@@ -11,12 +11,14 @@ class OrderItem {
   final double subTotal;
   final double tip;
   final List<CartItem> products;
-  final DateTime dateTime;
+  final DateTime orderDate;
   final PaymentDetails paymentDetails;
   final String notes;
   final String restaurantId;
-  final OrderStatus orderStatus;
   final String tableNumber;
+  OrderStatus orderStatus;
+  String acceptedBy;
+  DateTime acceptedDate;
 
   OrderItem(
       {this.id,
@@ -24,12 +26,14 @@ class OrderItem {
       @required this.subTotal,
       @required this.tip,
       @required this.products,
-      @required this.dateTime,
+      @required this.orderDate,
       @required this.paymentDetails,
       @required this.restaurantId,
       @required this.orderStatus,
       this.tableNumber,
-      this.notes});
+      this.notes,
+      this.acceptedBy,
+      this.acceptedDate});
 
   factory OrderItem.fromMap(String documentId, Map data) {
     return OrderItem(
@@ -37,13 +41,17 @@ class OrderItem {
         total: data['total'],
         subTotal: data['subTotal'],
         tip: data['tip'],
-        dateTime: DateTime.parse(data['dateTime']),
+        orderDate:
+            data['orderDate'] != null ? data['orderDate'].toDate() : null,
         orderStatus: data['orderStatus'] != null
             ? EnumToString.fromString(OrderStatus.values, data['orderStatus'])
             : null,
         tableNumber: data['tableNumber'] ?? '',
         notes: data['notes'] ?? '',
         restaurantId: data['restaurantId'] ?? '',
+        acceptedBy: data['acceptedBy'] ?? '',
+        acceptedDate:
+            data['acceptedDate'] != null ? data['acceptedDate'].toDate() : null,
         products: (data['products'] as List<dynamic>)
             .map(
               (item) => CartItem(
@@ -64,11 +72,13 @@ class OrderItem {
         "total": total,
         "subTotal": subTotal,
         "tip": tip,
-        "dateTime": dateTime.toIso8601String(),
+        "orderDate": orderDate,
         "notes": notes,
         "restaurantId": restaurantId,
-        "orderStatus": orderStatus.toString(),
         "tableNumber": tableNumber,
+        "orderStatus": orderStatus.toString(),
+        "acceptedBy": acceptedBy,
+        "acceptedDate": acceptedDate,
         'products': products
             .map((cp) => {
                   'id': cp.productId,
@@ -76,13 +86,14 @@ class OrderItem {
                   'quantity': cp.quantity,
                   'price': cp.price,
                   'notes': cp.notes,
+                  'category': cp.category,
                 })
             .toList(),
         'paymentDetails': paymentDetails.toJson()
       };
 
   bool get orderLate =>
-      DateTime.now().difference(dateTime).inMinutes > 5 ? true : false;
+      DateTime.now().difference(orderDate).inMinutes > 5 ? true : false;
 
   Map<String, int> categoryItemCount() {
     var categoryList = this.products.map((e) => e.category).toList();
@@ -102,4 +113,4 @@ class OrderItem {
   }
 }
 
-enum OrderStatus { AwaitingConfirmation, Ready }
+enum OrderStatus { AwaitingConfirmation, Accepted }

@@ -19,7 +19,7 @@ class AppDrawer extends StatelessWidget {
               title: Text('Accepted Orders'),
               onTap: () {
                 Navigator.of(context)
-                    .pushReplacementNamed(LiveOrdersScreen.routeName);
+                    .pushReplacementNamed(AcceptedOrdersScreen.routeName);
               },
             ),
             ListTile(
@@ -33,7 +33,7 @@ class AppDrawer extends StatelessWidget {
               title: Text('Archived'),
               onTap: () {
                 Navigator.of(context)
-                    .pushReplacementNamed(LiveMenuEditScreen.routeName);
+                    .pushReplacementNamed(ArchiveOrdersScreen.routeName);
               },
             ),
           ],

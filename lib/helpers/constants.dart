@@ -12,6 +12,9 @@ const TextStyle kGreySubTitle =
 const TextStyle kWhiteTitle =
     TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.white);
 
+const TextStyle kBlackTitle =
+    TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black);
+
 const TextStyle kWhiteSubTitle =
     TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white);
 

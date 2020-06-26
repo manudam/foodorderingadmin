@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -5,32 +7,116 @@ import '../helpers/database_collection_names.dart';
 import '../models/models.dart';
 
 class Orders with ChangeNotifier {
-  List<OrderItem> _orders = [];
+  List<OrderItem> _liveOrders = [];
+  List<OrderItem> _acceptedOrders = [];
   final _fireStore = Firestore.instance;
 
-  List<OrderItem> get orders {
-    return [..._orders.reversed.toList()];
+  StreamSubscription<QuerySnapshot> _liveOrdersListerer;
+  StreamSubscription<QuerySnapshot> _acceptedOrdersListerer;
+
+  List<OrderItem> get liveOrders {
+    return [..._liveOrders.reversed.toList()];
   }
 
-  Future<void> fetchOrders(User loggedinUser) async {
-    _orders.clear();
+  List<OrderItem> get acceptedOrders {
+    return [..._acceptedOrders.reversed.toList()];
+  }
 
-    await for (var snapshot in _fireStore
+  Future<void> streamLiveOrders(User loggedinUser) async {
+    _liveOrders.clear();
+
+    _liveOrdersListerer = _fireStore
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
-        .snapshots()) {
-      for (var order in snapshot.documents) {
+        .snapshots()
+        .listen((orders) {
+      for (var order in orders.documents) {
         var orderId = order.documentID;
 
         var orderExists =
-            _orders.where((element) => element.id == orderId).length > 0;
+            _liveOrders.where((element) => element.id == orderId).length > 0;
 
         if (!orderExists) {
-          _orders.add(OrderItem.fromMap(order.documentID, order.data));
+          if (order.data['orderStatus'] ==
+              OrderStatus.AwaitingConfirmation.toString()) {
+            _liveOrders.add(OrderItem.fromMap(order.documentID, order.data));
+          }
+        } else {
+          if (order.data['orderStatus'] == OrderStatus.Accepted.toString()) {
+            var acceptedOrder = _liveOrders
+                .where((element) => element.id == orderId)
+                .toList()[0];
+            _liveOrders.remove(acceptedOrder);
+          }
         }
       }
       notifyListeners();
+    });
+  }
+
+  void unstreamLiveOrders() {
+    if (_liveOrdersListerer != null) {
+      _liveOrdersListerer.cancel();
+      _liveOrdersListerer = null;
     }
+  }
+
+  Future<void> streamAcceptedOrders(User loggedinUser) async {
+    _acceptedOrders.clear();
+
+    var yesterday = DateTime.now().add(Duration(days: -1));
+
+    print(yesterday);
+
+    _acceptedOrdersListerer = _fireStore
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(loggedinUser.restaurantId)
+        .collection(DatabaseCollectionNames.orders)
+        .where("orderStatus", isEqualTo: OrderStatus.Accepted.toString())
+        .where("acceptedDate", isGreaterThan: yesterday)
+        .snapshots()
+        .listen((orders) {
+      for (var order in orders.documents) {
+        var orderId = order.documentID;
+
+        var orderExists =
+            _acceptedOrders.where((element) => element.id == orderId).length >
+                0;
+
+        if (!orderExists) {
+          _acceptedOrders.add(OrderItem.fromMap(order.documentID, order.data));
+        }
+      }
+      notifyListeners();
+    });
+  }
+
+  void unstreamAcceptedOrders() {
+    if (_acceptedOrdersListerer != null) {
+      _acceptedOrdersListerer.cancel();
+      _acceptedOrdersListerer = null;
+    }
+  }
+
+  Future<void> acceptOrder(OrderItem order, User loggedInUser) async {
+    order.orderStatus = OrderStatus.Accepted;
+    order.acceptedDate = DateTime.now();
+    order.acceptedBy = loggedInUser.name;
+
+    await updateOrder(order, loggedInUser);
+  }
+
+  Future<void> updateOrder(OrderItem updatedOrder, User loggedInUser) async {
+    print(updatedOrder.id);
+
+    await _fireStore
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(loggedInUser.restaurantId)
+        .collection(DatabaseCollectionNames.orders)
+        .document(updatedOrder.id)
+        .updateData(updatedOrder.toJson());
+
+    notifyListeners();
   }
 }
