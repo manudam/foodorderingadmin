@@ -43,8 +43,7 @@ class Menu with ChangeNotifier {
   }
 
   List<Product> findByCategory(String category) {
-    //return items.where((element) => element.category == category).toList();
-    return items;
+    return items.where((element) => element.category == category).toList();
   }
 
   void populateCategories() {

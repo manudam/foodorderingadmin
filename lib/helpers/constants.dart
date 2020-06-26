@@ -18,9 +18,13 @@ const TextStyle kWhiteSubTitle =
 const TextStyle kRedSubTitle =
     TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.red);
 
+const TextStyle kGreenNormalText = TextStyle(fontSize: 16, color: kGreen);
+
 //Colors
 const Color kGreyBackground = const Color(0xff5d5d5d);
 
 const Color kLightGreyBackground = const Color(0xffe6e6e6);
 
 const Color kYellow = const Color(0xfffcc556);
+
+const Color kGreen = const Color(0xff55bf5e);

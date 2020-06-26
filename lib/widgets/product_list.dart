@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
+import 'package:foodorderingadmin/providers/auth.dart';
 import 'package:foodorderingadmin/providers/menu.dart';
 import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:provider/provider.dart';
@@ -10,6 +11,7 @@ class ProductList extends StatelessWidget {
     final menuData = Provider.of<Menu>(context);
     final selectedCategory = menuData.selectedCategory;
     final products = menuData.findByCategory(selectedCategory);
+    var loggedInUser = Provider.of<Auth>(context).loggedInUser;
 
     List<Widget> cards = [];
 
@@ -26,13 +28,20 @@ class ProductList extends StatelessWidget {
                 style: kMediumText,
               ),
             ),
-            leading: Container(
-              alignment: Alignment.centerLeft,
-              width: 20,
-              child: Checkbox(
-                value: true,
-                onChanged: (value) {},
-              ),
+            leading: IconButton(
+              icon: product.disabled
+                  ? Icon(
+                      Icons.close,
+                      color: kGreyBackground,
+                    )
+                  : Icon(
+                      Icons.check_box,
+                      color: kGreen,
+                    ),
+              onPressed: () async {
+                product.disabled = !product.disabled;
+                await menuData.updateProduct(product.id, product, loggedInUser);
+              },
             ),
             trailing: Text("£ ${product.price.toString()}", style: kMediumText),
             onTap: () {

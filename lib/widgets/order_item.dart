@@ -55,10 +55,36 @@ class _OrderItemState extends State<OrderItem> {
     );
   }
 
+  Future<void> _showTransactionDetails() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text(
+                    "Name given: ${widget.order.paymentDetails.cardHolderName}"),
+                Text("Email: ${widget.order.paymentDetails.receiptEmail}"),
+                Text("Order ID: ${widget.order.id}"),
+                Text(
+                    "Stripe transaction ID: ${widget.order.paymentDetails.paymentMethodId}"),
+                Text("Sub Total: £${widget.order.subTotal.toStringAsFixed(2)}"),
+                Text("Tip: £${widget.order.tip.toStringAsFixed(2)}"),
+                Text("Total paid: £${widget.order.total.toStringAsFixed(2)}"),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(20),
+      margin: EdgeInsets.only(left: 20, right: 10, top: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -124,6 +150,16 @@ class _OrderItemState extends State<OrderItem> {
                 ],
               ),
             ),
+          ),
+          FlatButton(
+            padding: EdgeInsets.all(7.5),
+            child: Text(
+              "more details",
+              style: kGreenNormalText,
+            ),
+            onPressed: () {
+              _showTransactionDetails();
+            },
           )
         ],
       ),

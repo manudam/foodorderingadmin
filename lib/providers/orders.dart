@@ -9,7 +9,7 @@ class Orders with ChangeNotifier {
   final _fireStore = Firestore.instance;
 
   List<OrderItem> get orders {
-    return [..._orders];
+    return [..._orders.reversed.toList()];
   }
 
   Future<void> fetchOrders(User loggedinUser) async {
@@ -25,8 +25,6 @@ class Orders with ChangeNotifier {
 
         var orderExists =
             _orders.where((element) => element.id == orderId).length > 0;
-
-        print(order.data);
 
         if (!orderExists) {
           _orders.add(OrderItem.fromMap(order.documentID, order.data));

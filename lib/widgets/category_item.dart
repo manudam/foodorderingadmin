@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/menu.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class CategoryItem extends StatelessWidget {
             category,
             style: TextStyle(color: Colors.white),
           ),
-          selectedColor: Colors.green,
+          selectedColor: kGreen,
           onSelected: (bool selection) {
             products.selectCategory(category);
           },

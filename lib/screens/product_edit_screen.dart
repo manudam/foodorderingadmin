@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/helpers/constants.dart';
+import 'package:foodorderingadmin/providers/restaurants.dart';
+import 'package:foodorderingadmin/widgets/app_drawer.dart';
+import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -34,8 +38,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     'description': '',
     'price': '',
     'category': '',
-    'allegens': '',
-    'notes': '',
+    'isVegan': false,
+    'isVegetarian': false,
   };
   var _isInit = true;
   var _loading = false;
@@ -52,8 +56,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
           'category': _editedProduct.category,
-          'allegens': _editedProduct.allegens,
-          'notes': _editedProduct.notes,
+          'isVegan': _editedProduct.isVegan,
+          'isVegeterian': _editedProduct.isVegeterian,
         };
       }
     }
@@ -101,15 +105,15 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var categories =
+        Provider.of<Restaurants>(context, listen: false).restaurant.categories;
+
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Edit Product"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.save),
-              onPressed: _saveForm,
-            ),
-          ],
+        appBar: BaseAppBar(
+          title: _initValues["name"] != '' ? _initValues["name"] : "Add Item",
+          backgroundColor: Colors.white,
+          textColor: Colors.black,
+          appBar: AppBar(),
         ),
         body: LoadingScreen(
           inAsyncCall: _loading,
@@ -120,6 +124,34 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
               child: Form(
                 key: _form,
                 child: Column(children: [
+                  DropdownButtonFormField(
+                    isExpanded: false,
+                    decoration: InputDecoration(labelText: 'Category'),
+                    items: categories
+                        ?.map((item) => DropdownMenuItem(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 0),
+                                child: Text(item),
+                              ),
+                              value: item,
+                            ))
+                        ?.toList(),
+                    value: _initValues['category'],
+                    onSaved: (value) {
+                      _editedProduct.category = value;
+                    },
+                    onChanged: (value) {
+                      _editedProduct.category = value;
+                    },
+                    focusNode: _categoryFocusNode,
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please select a category.';
+                      }
+                      return null;
+                    },
+                  ),
                   TextFormField(
                     initialValue: _initValues['name'],
                     decoration: InputDecoration(labelText: 'Name'),
@@ -134,14 +166,27 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      _editedProduct = Product(
-                          name: value,
-                          price: _editedProduct.price,
-                          description: _editedProduct.description,
-                          allegens: _editedProduct.allegens,
-                          notes: _editedProduct.notes,
-                          category: _editedProduct.category,
-                          id: _editedProduct.id);
+                      _editedProduct.name = value;
+                    },
+                  ),
+                  TextFormField(
+                    initialValue: _initValues['description'],
+                    decoration: InputDecoration(labelText: 'Description'),
+                    maxLines: 3,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.multiline,
+                    focusNode: _descriptionFocusNode,
+                    onFieldSubmitted: (_) {
+                      FocusScope.of(context).requestFocus(_allegensFocusNode);
+                    },
+                    validator: (value) {
+                      if (value.isEmpty) {
+                        return 'Please enter a description.';
+                      }
+                      return null;
+                    },
+                    onSaved: (value) {
+                      _editedProduct.description = value;
                     },
                   ),
                   TextFormField(
@@ -167,117 +212,66 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      _editedProduct = Product(
-                          name: _editedProduct.name,
-                          price: double.parse(value),
-                          description: _editedProduct.description,
-                          allegens: _editedProduct.allegens,
-                          notes: _editedProduct.notes,
-                          category: _editedProduct.category,
-                          id: _editedProduct.id);
+                      _editedProduct.price = double.parse(value);
                     },
                   ),
-                  TextFormField(
-                    initialValue: _initValues['description'],
-                    decoration: InputDecoration(labelText: 'Description'),
-                    maxLines: 3,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _descriptionFocusNode,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_allegensFocusNode);
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter a description.';
-                      }
-                      if (value.length < 10) {
-                        return 'Should be at least 10 characters long.';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _editedProduct = Product(
-                        name: _editedProduct.name,
-                        price: _editedProduct.price,
-                        description: value,
-                        allegens: _editedProduct.allegens,
-                        notes: _editedProduct.notes,
-                        category: _editedProduct.category,
-                        id: _editedProduct.id,
-                      );
-                    },
+                  Text("Tags", style: kGreySubTitle),
+                  Container(
+                    height: 200,
+                    child: ListView(
+                      children: [
+                        CheckboxListTile(
+                          title: Text("Vegeterian"),
+                          value: _initValues["isVegeterian"],
+                          onChanged: (value) {
+                            setState(() {
+                              _initValues["isVegeterian"] = value;
+                            });
+                          },
+                        ),
+                        CheckboxListTile(
+                          title: Text("Vegeterian"),
+                          value: _initValues["isVegeterian"],
+                          onChanged: (value) {
+                            setState(() {
+                              _initValues["isVegeterian"] = value;
+                            });
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                  TextFormField(
-                    initialValue: _initValues['allegens'],
-                    decoration: InputDecoration(labelText: 'Allegens'),
-                    maxLines: 3,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _allegensFocusNode,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_notesFocusNode);
-                    },
-                    onSaved: (value) {
-                      _editedProduct = Product(
-                        name: _editedProduct.name,
-                        price: _editedProduct.price,
-                        description: _editedProduct.description,
-                        allegens: value,
-                        notes: _editedProduct.notes,
-                        category: _editedProduct.category,
-                        id: _editedProduct.id,
-                      );
-                    },
+                  SizedBox(
+                    height: 30,
                   ),
-                  TextFormField(
-                    initialValue: _initValues['notes'],
-                    decoration: InputDecoration(labelText: 'Notes'),
-                    maxLines: 3,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.multiline,
-                    focusNode: _notesFocusNode,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_categoryFocusNode);
-                    },
-                    onSaved: (value) {
-                      _editedProduct = Product(
-                        name: _editedProduct.name,
-                        price: _editedProduct.price,
-                        description: _editedProduct.description,
-                        allegens: _editedProduct.allegens,
-                        notes: value,
-                        category: _editedProduct.category,
-                        id: _editedProduct.id,
-                      );
-                    },
-                  ),
-                  TextFormField(
-                    initialValue: _initValues['category'],
-                    decoration: InputDecoration(labelText: 'Category'),
-                    textInputAction: TextInputAction.done,
-                    focusNode: _categoryFocusNode,
-                    onFieldSubmitted: (_) {
-                      _saveForm();
-                    },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter a category.';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _editedProduct = Product(
-                        name: _editedProduct.name,
-                        price: _editedProduct.price,
-                        description: _editedProduct.description,
-                        allegens: _editedProduct.allegens,
-                        notes: _editedProduct.notes,
-                        category: value,
-                        id: _editedProduct.id,
-                      );
-                    },
-                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MaterialButton(
+                        child: Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: kYellow,
+                        onPressed: () {
+                          _saveForm();
+                        },
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      MaterialButton(
+                        child: Text(
+                          "Cancel",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: Colors.grey,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      )
+                    ],
+                  )
                 ]),
               ),
             ),
