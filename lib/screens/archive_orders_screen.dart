@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/screens/screens.dart';
+import 'package:foodorderingadmin/widgets/archived_order_list.dart';
+import 'package:foodorderingadmin/widgets/order_date_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'package:foodorderingadmin/helpers/constants.dart';
@@ -25,7 +28,7 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
   void didChangeDependencies() {
     if (!_isInit) {
       var loggedInUser = Provider.of<Auth>(context).loggedInUser;
-      Provider.of<Orders>(context).streamAcceptedOrders(loggedInUser);
+      Provider.of<Analytics>(context).fetchAnalytics(loggedInUser);
 
       _isInit = true;
     }
@@ -41,8 +44,6 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final orders = Provider.of<Orders>(context).acceptedOrders;
-
     return Scaffold(
       appBar: BaseAppBar(
         title: "Archive",
@@ -51,13 +52,20 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
         appBar: AppBar(),
       ),
       drawer: AppDrawer(),
-      body: Container(
-        color: kLightGreyBackground,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: orders.length,
-          itemBuilder: (ctx, i) => AcceptedOrderItem(orders[i]),
-        ),
+      body: Column(
+        children: [
+          Container(
+            height: 100,
+            color: kLightGreyBackground,
+            child: OrderDatePicker(),
+          ),
+          Expanded(
+            child: Container(
+              color: kGreyBackground,
+              child: ArchivedOrderList(),
+            ),
+          )
+        ],
       ),
     );
   }

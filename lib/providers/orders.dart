@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -15,23 +14,24 @@ class Orders with ChangeNotifier {
   StreamSubscription<QuerySnapshot> _acceptedOrdersListerer;
 
   List<OrderItem> get liveOrders {
-    return [..._liveOrders.reversed.toList()];
+    return [..._liveOrders.toList()];
   }
 
   List<OrderItem> get acceptedOrders {
-    return [..._acceptedOrders.reversed.toList()];
+    return [..._acceptedOrders.toList()];
   }
 
   Future<void> streamLiveOrders(User loggedinUser) async {
     _liveOrders.clear();
 
-    var yesterday = DateTime.now().add(Duration(days: -1));
+    var today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     _liveOrdersListerer = _fireStore
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
-        .where("orderDate", isGreaterThan: yesterday)
+        .where("orderDate", isGreaterThanOrEqualTo: today)
         .snapshots()
         .listen((orders) {
       for (var order in orders.documents) {
@@ -68,14 +68,15 @@ class Orders with ChangeNotifier {
   Future<void> streamAcceptedOrders(User loggedinUser) async {
     _acceptedOrders.clear();
 
-    var yesterday = DateTime.now().add(Duration(days: -1));
+    var today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     _acceptedOrdersListerer = _fireStore
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
         .where("orderStatus", isEqualTo: OrderStatus.Accepted.toString())
-        .where("acceptedDate", isGreaterThan: yesterday)
+        .where("acceptedDate", isGreaterThanOrEqualTo: today)
         .snapshots()
         .listen((orders) {
       for (var order in orders.documents) {
@@ -98,6 +99,30 @@ class Orders with ChangeNotifier {
       _acceptedOrdersListerer.cancel();
       _acceptedOrdersListerer = null;
     }
+  }
+
+  Future<List<OrderItem>> fetchArchivedOrders(
+      DateTime orderDate, User loggedinUser) async {
+    var queryDate = DateTime(orderDate.year, orderDate.month, orderDate.day);
+    List<OrderItem> archivedOrders = [];
+    print(queryDate);
+
+    var documents = await _fireStore
+        .collection(DatabaseCollectionNames.restaurants)
+        .document(loggedinUser.restaurantId)
+        .collection(DatabaseCollectionNames.orders)
+        .where("orderStatus", isEqualTo: OrderStatus.Accepted.toString())
+        .where("acceptedDate", isGreaterThanOrEqualTo: queryDate)
+        .where("acceptedDate", isLessThan: queryDate.add(Duration(days: 1)))
+        .getDocuments();
+
+    print(documents.documents.length);
+
+    for (var order in documents.documents) {
+      archivedOrders.add(OrderItem.fromMap(order.documentID, order.data));
+    }
+
+    return archivedOrders;
   }
 
   Future<void> acceptOrder(OrderItem order, User loggedInUser) async {

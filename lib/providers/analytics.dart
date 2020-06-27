@@ -8,7 +8,12 @@ import 'package:foodorderingadmin/models/user.dart';
 class Analytics extends ChangeNotifier {
   final _databaseReference = Firestore.instance;
 
-  DayOrderAnalytic dayOrderAnalytic;
+  DayOrderAnalytic _dayOrderAnalytic;
+
+  DayOrderSummary selectedOrderDay;
+
+  List<DayOrderSummary> get orderAnalytics =>
+      [..._dayOrderAnalytic.dayOrderSummary];
 
   Future<void> fetchAnalytics(User loggedInUser) async {
     var documents = await _databaseReference
@@ -19,29 +24,41 @@ class Analytics extends ChangeNotifier {
         .getDocuments();
 
     for (var document in documents.documents) {
-      dayOrderAnalytic =
+      _dayOrderAnalytic =
           DayOrderAnalytic.fromMap(document.documentID, document.data);
     }
 
-    if (dayOrderAnalytic == null) {
-      dayOrderAnalytic =
+    if (_dayOrderAnalytic == null) {
+      _dayOrderAnalytic =
           DayOrderAnalytic(name: "DayOrderAnalytic", dayOrderSummary: []);
 
       await _saveDayOrderAnalytic(loggedInUser.restaurantId);
     }
 
+    _dayOrderAnalytic.dayOrderSummary
+        .sort((a, b) => b.orderDate.compareTo(a.orderDate));
+
+    if (_dayOrderAnalytic.dayOrderSummary.length > 0) {
+      selectedOrderDay = _dayOrderAnalytic.dayOrderSummary[0];
+    }
+
+    notifyListeners();
+  }
+
+  void selectDayOrder(DayOrderSummary dayOrder) {
+    selectedOrderDay = dayOrder;
     notifyListeners();
   }
 
   Future<void> updateDayOrderAnalytic(
       OrderItem order, User loggedInUser) async {
-    var orderDays = dayOrderAnalytic.dayOrderSummary.where((element) =>
+    var orderDays = _dayOrderAnalytic.dayOrderSummary.where((element) =>
         element.orderDate.day == order.orderDate.day &&
         element.orderDate.month == order.orderDate.month &&
         element.orderDate.year == order.orderDate.year);
 
     if (orderDays.length == 0) {
-      dayOrderAnalytic.dayOrderSummary.add(DayOrderSummary(
+      _dayOrderAnalytic.dayOrderSummary.add(DayOrderSummary(
           orderDate: order.orderDate, total: order.total, orderCount: 1));
     } else {
       var orderDay = orderDays.toList()[0];
@@ -55,21 +72,21 @@ class Analytics extends ChangeNotifier {
   }
 
   Future<void> _saveDayOrderAnalytic(String restaurantId) async {
-    if (dayOrderAnalytic.id == null) {
+    if (_dayOrderAnalytic.id == null) {
       var savedAnalytic = await _databaseReference
           .collection(DatabaseCollectionNames.restaurants)
           .document(restaurantId)
           .collection(DatabaseCollectionNames.analytics)
-          .add(dayOrderAnalytic.toJson());
+          .add(_dayOrderAnalytic.toJson());
 
-      dayOrderAnalytic.id = savedAnalytic.documentID;
+      _dayOrderAnalytic.id = savedAnalytic.documentID;
     } else {
       await _databaseReference
           .collection(DatabaseCollectionNames.restaurants)
           .document(restaurantId)
           .collection(DatabaseCollectionNames.analytics)
-          .document(dayOrderAnalytic.id)
-          .updateData(dayOrderAnalytic.toJson());
+          .document(_dayOrderAnalytic.id)
+          .updateData(_dayOrderAnalytic.toJson());
     }
   }
 }
