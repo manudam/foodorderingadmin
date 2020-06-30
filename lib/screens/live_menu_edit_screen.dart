@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
-import 'package:foodorderingadmin/models/restaurant.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:foodorderingadmin/widgets/category_picker.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';

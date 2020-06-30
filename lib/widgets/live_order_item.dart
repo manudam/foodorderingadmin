@@ -29,7 +29,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: true, // user must tap button!
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(

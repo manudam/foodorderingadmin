@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
-import 'package:foodorderingadmin/widgets/app_drawer.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:provider/provider.dart';
@@ -20,9 +19,7 @@ class ProductEditScreen extends StatefulWidget {
 class _ProductEditScreenState extends State<ProductEditScreen> {
   final _priceFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
-  final _allegensFocusNode = FocusNode();
-  final _notesFocusNode = FocusNode();
-  final _categoryFocusNode = FocusNode();
+  final _nameFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
 
   var _editedProduct = Product(
@@ -31,6 +28,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     price: 0,
     description: '',
     category: '',
+    isVegan: false,
+    isVegeterian: false,
   );
 
   var _initValues = {
@@ -48,9 +47,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   void didChangeDependencies() {
     if (_isInit) {
       final productId = ModalRoute.of(context).settings.arguments as String;
+      final menuData = Provider.of<Menu>(context, listen: false);
       if (productId != null) {
-        _editedProduct =
-            Provider.of<Menu>(context, listen: false).findById(productId);
+        _editedProduct = menuData.findById(productId);
         _initValues = {
           'name': _editedProduct.name,
           'description': _editedProduct.description,
@@ -60,7 +59,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           'isVegeterian': _editedProduct.isVegeterian,
         };
       }
+      if (_initValues['category'].toString().isEmpty)
+        _initValues['category'] = menuData.selectedCategory;
     }
+
     _isInit = false;
     super.didChangeDependencies();
   }
@@ -69,9 +71,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   void dispose() {
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
-    _categoryFocusNode.dispose();
-    _allegensFocusNode.dispose();
-    _notesFocusNode.dispose();
+    _nameFocusNode.dispose();
     super.dispose();
   }
 
@@ -83,11 +83,16 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
       final loggedInUser =
           Provider.of<Auth>(context, listen: false).loggedInUser;
 
+//update tags
+      _editedProduct.isVegan = _initValues['isVegan'];
+      _editedProduct.isVegeterian = _initValues['isVegetarian'];
+
       final isValid = _form.currentState.validate();
       if (!isValid) {
         return;
       }
       _form.currentState.save();
+
       if (_editedProduct.id != null) {
         Provider.of<Menu>(context, listen: false)
             .updateProduct(_editedProduct.id, _editedProduct, loggedInUser);
@@ -142,9 +147,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       _editedProduct.category = value;
                     },
                     onChanged: (value) {
-                      _editedProduct.category = value;
+                      FocusScope.of(context).requestFocus(_nameFocusNode);
                     },
-                    focusNode: _categoryFocusNode,
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please select a category.';
@@ -156,8 +160,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     initialValue: _initValues['name'],
                     decoration: InputDecoration(labelText: 'Name'),
                     textInputAction: TextInputAction.next,
+                    focusNode: _nameFocusNode,
                     onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_priceFocusNode);
+                      FocusScope.of(context)
+                          .requestFocus(_descriptionFocusNode);
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -177,7 +183,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     keyboardType: TextInputType.multiline,
                     focusNode: _descriptionFocusNode,
                     onFieldSubmitted: (_) {
-                      FocusScope.of(context).requestFocus(_allegensFocusNode);
+                      FocusScope.of(context).requestFocus(_priceFocusNode);
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -195,10 +201,6 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     focusNode: _priceFocusNode,
-                    onFieldSubmitted: (_) {
-                      FocusScope.of(context)
-                          .requestFocus(_descriptionFocusNode);
-                    },
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter a price.';
@@ -215,14 +217,32 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       _editedProduct.price = double.parse(value);
                     },
                   ),
-                  Text("Tags", style: kGreySubTitle),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Tags",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   Container(
                     height: 200,
+                    width: 120,
                     child: ListView(
                       children: [
                         CheckboxListTile(
-                          title: Text("Vegeterian"),
-                          value: _initValues["isVegeterian"],
+                          value: _initValues["isVegeterian"] ?? false,
+                          title: Text("V"),
                           onChanged: (value) {
                             setState(() {
                               _initValues["isVegeterian"] = value;
@@ -230,14 +250,14 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                           },
                         ),
                         CheckboxListTile(
-                          title: Text("Vegeterian"),
-                          value: _initValues["isVegeterian"],
+                          value: _initValues["isVegan"] ?? false,
+                          title: Text("VG"),
                           onChanged: (value) {
                             setState(() {
-                              _initValues["isVegeterian"] = value;
+                              _initValues["isVegan"] = value;
                             });
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),

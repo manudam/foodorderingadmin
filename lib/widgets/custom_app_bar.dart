@@ -31,7 +31,7 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
         transform: Matrix4.translationValues(-8.0, 0.0, 0.0),
         child: Text(
           title,
-          style: TextStyle(color: textColor),
+          style: TextStyle(color: textColor, fontFamily: 'CenturyGothic'),
         ),
       ),
       iconTheme: new IconThemeData(color: Colors.grey),

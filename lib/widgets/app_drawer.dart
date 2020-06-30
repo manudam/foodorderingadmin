@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/providers/auth.dart';
+import 'package:provider/provider.dart';
 import '../screens/screens.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -34,6 +36,12 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Navigator.of(context)
                     .pushReplacementNamed(ArchiveOrdersScreen.routeName);
+              },
+            ),
+            ListTile(
+              title: Text('Log out'),
+              onTap: () {
+                Provider.of<Auth>(context, listen: false).signOut();
               },
             ),
           ],
