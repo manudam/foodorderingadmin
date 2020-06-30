@@ -40,15 +40,11 @@ class Auth extends ChangeNotifier {
 
   //Method to handle user sign in using email and password
   Future<bool> login(String email, String password) async {
-    try {
-      loggedInUser = null;
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
-      await fetchUserDetails();
-      notifyListeners();
-      return true;
-    } catch (e) {
-      return false;
-    }
+    loggedInUser = null;
+    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    await fetchUserDetails();
+    notifyListeners();
+    return true;
   }
 
   //Method to handle user sign in using email and password

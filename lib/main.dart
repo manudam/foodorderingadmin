@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
+import 'package:foodorderingadmin/screens/splash_screen.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,15 @@ import './providers/auth.dart';
 import './screens/screens.dart';
 
 void main() async {
+  // Set `enableInDevMode` to true to see reports while in debug mode
+  // This is only to be used for confirming that reports are being
+  // submitted as expected. It is not intended to be used for everyday
+  // development.
+  Crashlytics.instance.enableInDevMode = true;
+
+  // Pass all uncaught errors from the framework to Crashlytics.
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+
   runApp(MyApp());
 }
 
@@ -38,7 +49,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
-          title: 'Food ordering Admin',
+          title: 'Get Table Service Host',
           theme: ThemeData(
             primarySwatch: Colors.blue,
             visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -48,15 +59,15 @@ class MyApp extends StatelessWidget {
           home: FutureBuilder(
               future: auth.fetchUserDetails(),
               builder: (ctx, snapshot) =>
-                  snapshot.hasData && snapshot.data?.restaurantId != null
-                      ? LiveOrdersScreen()
-                      : SigninScreen()),
+                  snapshot.connectionState == ConnectionState.waiting
+                      ? SplashScreen()
+                      : snapshot.hasData && snapshot.data?.restaurantId != null
+                          ? LiveOrdersScreen()
+                          : SigninScreen()),
           routes: {
             LiveMenuEditScreen.routeName: (context) => LiveMenuEditScreen(),
             ProductEditScreen.routeName: (context) => ProductEditScreen(),
             SigninScreen.routeName: (context) => SigninScreen(),
-            SignupScreen.routeName: (context) => SignupScreen(),
-            AccountScreen.routeName: (context) => AccountScreen(),
             LiveOrdersScreen.routeName: (context) => LiveOrdersScreen(),
             AcceptedOrdersScreen.routeName: (context) => AcceptedOrdersScreen(),
             ArchiveOrdersScreen.routeName: (context) => ArchiveOrdersScreen(),

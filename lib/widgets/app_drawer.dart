@@ -38,10 +38,13 @@ class AppDrawer extends StatelessWidget {
                     .pushReplacementNamed(ArchiveOrdersScreen.routeName);
               },
             ),
+            Divider(),
             ListTile(
               title: Text('Log out'),
               onTap: () {
                 Provider.of<Auth>(context, listen: false).signOut();
+                Navigator.of(context)
+                    .pushReplacementNamed(SigninScreen.routeName);
               },
             ),
           ],
