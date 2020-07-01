@@ -22,6 +22,9 @@ class FormInputFieldWithIcon extends StatelessWidget {
       this.obscureText = false,
       this.minLines = 1,
       this.maxLines,
+      this.focusNode,
+      this.textInputAction,
+      this.onFieldSubmitted,
       this.onChanged,
       this.onSaved});
 
@@ -35,6 +38,9 @@ class FormInputFieldWithIcon extends StatelessWidget {
   final int maxLines;
   final void Function(String) onChanged;
   final void Function(String) onSaved;
+  final void Function(String) onFieldSubmitted;
+  final FocusNode focusNode;
+  final TextInputAction textInputAction;
 
   @override
   Widget build(BuildContext context) {
@@ -52,6 +58,9 @@ class FormInputFieldWithIcon extends StatelessWidget {
       maxLines: maxLines,
       minLines: minLines,
       validator: validator,
+      focusNode: focusNode,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }

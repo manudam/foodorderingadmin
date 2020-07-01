@@ -19,6 +19,7 @@ class _SigninScreenState extends State<SigninScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = new TextEditingController();
   final TextEditingController _password = new TextEditingController();
+  final _passwordFocusNode = FocusNode();
   bool _loading = false;
 
   @override
@@ -30,6 +31,7 @@ class _SigninScreenState extends State<SigninScreen> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -51,90 +53,123 @@ class _SigninScreenState extends State<SigninScreen> {
     }
 
     return Scaffold(
-      appBar: BaseAppBar(
-        title: "   Sign-in",
-        backgroundColor: Colors.white,
-        textColor: Colors.black,
-        appBar: AppBar(),
-      ),
       body: LoadingScreen(
         child: Form(
           key: _formKey,
-          child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Center(
-                child: SingleChildScrollView(
+          child: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: SingleChildScrollView(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      SizedBox(
-                        height: 3,
+                      Column(
+                        children: [
+                          Image(
+                            image: AssetImage("images/GTSLogo.png"),
+                          ),
+                          Text(
+                            'Contact Free Order and Pay',
+                            style: kGreyTitle,
+                          )
+                        ],
                       ),
-                      Container(
-                        width: 400,
-                        child: FormInputFieldWithIcon(
-                          controller: _email,
-                          iconPrefix: Icons.email,
-                          labelText: "Email",
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: (value) => null,
-                          onSaved: (value) => _email.text = value,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please enter an email';
-                            }
-                            if (EmailValidator.validate(value) == false) {
-                              return 'Please enter a valid email address';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      FormVerticalSpace(),
-                      Container(
-                        width: 400,
-                        child: FormInputFieldWithIcon(
-                          controller: _password,
-                          iconPrefix: Icons.lock,
-                          labelText: "Password",
-                          obscureText: true,
-                          onChanged: (value) => null,
-                          onSaved: (value) => _password.text = value,
-                          maxLines: 1,
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Please enter a password';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-                      FormVerticalSpace(),
-                      MaterialButton(
-                        child: Text('Sign-in',
-                            style: TextStyle(color: Colors.white)),
-                        color: kYellow,
-                        onPressed: () async {
-                          if (_formKey.currentState.validate()) {
-                            setState(() {
-                              _loading = true;
-                            });
+                      Column(
+                        children: [
+                          Text("Sign-in",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                              )),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Container(
+                            width: 400,
+                            child: FormInputFieldWithIcon(
+                              controller: _email,
+                              iconPrefix: Icons.email,
+                              labelText: "Email",
+                              keyboardType: TextInputType.emailAddress,
+                              onChanged: (value) => null,
+                              textInputAction: TextInputAction.next,
+                              onFieldSubmitted: (_) {
+                                FocusScope.of(context)
+                                    .requestFocus(_passwordFocusNode);
+                              },
+                              onSaved: (value) => _email.text = value,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please enter an email';
+                                }
+                                if (EmailValidator.validate(value) == false) {
+                                  return 'Please enter a valid email address';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          FormVerticalSpace(),
+                          Container(
+                            width: 400,
+                            child: FormInputFieldWithIcon(
+                              controller: _password,
+                              iconPrefix: Icons.lock,
+                              labelText: "Password",
+                              obscureText: true,
+                              onChanged: (value) => null,
+                              onSaved: (value) => _password.text = value,
+                              maxLines: 1,
+                              focusNode: _passwordFocusNode,
+                              textInputAction: TextInputAction.done,
+                              validator: (value) {
+                                if (value.isEmpty) {
+                                  return 'Please enter a password';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          FormVerticalSpace(),
+                          MaterialButton(
+                            child: Container(
+                              width: 150,
+                              alignment: Alignment.center,
+                              child: Text('Sign-in',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20)),
+                            ),
+                            padding: EdgeInsets.all(10),
+                            color: kYellow,
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                setState(() {
+                                  _loading = true;
+                                });
 
-                            try {
-                              await _auth.login(_email.text, _password.text);
-                            } catch (exception) {
-                              _showMyDialog("Error", exception.message);
-                            } finally {
-                              setState(() {
-                                _loading = false;
-                              });
-                            }
-                          }
-                        },
+                                try {
+                                  await _auth.login(
+                                      _email.text, _password.text);
+                                } catch (exception) {
+                                  _showMyDialog("Error", exception.message);
+                                } finally {
+                                  setState(() {
+                                    _loading = false;
+                                  });
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ),
+                      Container(),
                     ],
                   ),
                 ),

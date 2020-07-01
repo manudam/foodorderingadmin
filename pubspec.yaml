@@ -49,7 +49,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.7.5
 
 flutter_icons:
-  image_path: "images/Launcher_Host.png"
+  image_path: "images/HostAppIcon.png"
   android: true 
   ios: true
 
@@ -66,7 +66,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/Launcher_Host.png
+    - images/GTSLogo.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
