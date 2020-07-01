@@ -18,7 +18,6 @@ class ArchivedOrderList extends StatelessWidget {
         builder: (ctx, snapshot) {
           if (snapshot.hasData) {
             var orders = snapshot.data;
-            print(orders[0].total);
             return ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: orders.length,

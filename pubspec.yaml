@@ -40,6 +40,7 @@ dependencies:
   enum_to_string: ^1.0.9
   timeago: ^2.0.26
   email_validator: '^1.0.0'
+  url_launcher: ^5.4.11
 
 dev_dependencies:
   flutter_test:
@@ -88,7 +89,7 @@ flutter:
           weight: 700
     - family: CenturyGothic
       fonts:
-        - asset: fonts/Century Gothic 400.ttf
+        - asset: fonts/CenturyGothic400.ttf
 
   #
   # For details regarding fonts from package dependencies,

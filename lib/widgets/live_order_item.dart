@@ -42,7 +42,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
           actions: <Widget>[
             MaterialButton(
               child: Text('Confirm', style: TextStyle(color: Colors.white)),
-              color: widget.order.orderLate ? Colors.red : Colors.yellow,
+              color: widget.order.orderLate ? Colors.red : kYellow,
               onPressed: () async {
                 final loggedInUser =
                     Provider.of<Auth>(context, listen: false).loggedInUser;
@@ -158,8 +158,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                         "Accept",
                         style: TextStyle(color: Colors.white),
                       ),
-                      color:
-                          widget.order.orderLate ? Colors.red : Colors.yellow,
+                      color: widget.order.orderLate ? Colors.red : kYellow,
                       onPressed: () {
                         _showMyDialog();
                       },

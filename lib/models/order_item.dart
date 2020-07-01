@@ -38,9 +38,13 @@ class OrderItem {
   factory OrderItem.fromMap(String documentId, Map data) {
     return OrderItem(
         id: documentId,
-        total: data['total'],
-        subTotal: data['subTotal'],
-        tip: data['tip'],
+        total: data['total'] != null
+            ? double.parse(data['total'].toString())
+            : 0.00,
+        subTotal: data['subTotal'] != null
+            ? double.parse(data['subTotal'].toString())
+            : 0.00,
+        tip: data['tip'] != null ? double.parse(data['tip'].toString()) : 0.00,
         orderDate:
             data['orderDate'] != null ? data['orderDate'].toDate() : null,
         orderStatus: data['orderStatus'] != null
@@ -56,7 +60,9 @@ class OrderItem {
             .map(
               (item) => CartItem(
                   productId: item['id'],
-                  price: item['price'],
+                  price: data['price'] != null
+                      ? double.parse(data['price'].toString())
+                      : 0.00,
                   quantity: item['quantity'],
                   title: item['title'],
                   notes: item['notes'],

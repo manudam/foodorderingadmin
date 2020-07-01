@@ -1,21 +1,21 @@
 {
-    "name": "foodorderingadmin",
-    "short_name": "foodorderingadmin",
+    "name": "GetTableService-Host",
+    "short_name": "GetTableService-Host",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "GetTableService-Host: Contact Free Order and Pay",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
+            "src": "icons/HostAppIcon192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "icons/Icon-512.png",
+            "src": "icons/HostAppIcon512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
