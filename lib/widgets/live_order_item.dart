@@ -98,7 +98,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
           SizedBox(
             height: 15,
           ),
-          Card(
+          Material(
             child: Container(
               padding: EdgeInsets.all(20),
               width: 280,

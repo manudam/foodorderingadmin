@@ -24,12 +24,12 @@ class Auth extends ChangeNotifier {
 
   Future<User> fetchUserDetails() async {
     if (loggedInUser == null) {
-      var user = await getUser;
+      var user = await getFirebaseUser();
       if (user?.uid != null) {
         var document =
             await _fireStore.document('/$_collection/${user.uid}').get();
 
-        loggedInUser = User.fromMap(document.data);
+        loggedInUser = User.fromMap(document.documentID, document.data);
 
         notifyListeners();
       }
@@ -75,6 +75,7 @@ class Auth extends ChangeNotifier {
   Future<bool> signOut() async {
     try {
       await _auth.signOut();
+      loggedInUser = null;
       notifyListeners();
       return true;
     } catch (e) {

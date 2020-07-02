@@ -19,7 +19,7 @@ class _State extends State<OrderDatePicker> {
         Provider.of<Analytics>(context, listen: false).orderAnalytics;
 
     return Container(
-        padding: EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.only(left: 30, right: 10, top: 10),
         margin: EdgeInsets.only(bottom: 10),
         height: 50,
         child: ListView.builder(

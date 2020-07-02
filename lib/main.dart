@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
+import 'package:foodorderingadmin/providers/userpreferences.dart';
 import 'package:foodorderingadmin/screens/splash_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
@@ -31,31 +32,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(
-          value: Auth(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Menu(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Restaurants(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Orders(),
-        ),
-        ChangeNotifierProvider.value(
-          value: Analytics(),
-        ),
+        ChangeNotifierProvider(create: (context) => Auth()),
+        ChangeNotifierProvider(create: (context) => Menu()),
+        ChangeNotifierProvider(create: (context) => Restaurants()),
+        ChangeNotifierProvider(create: (context) => Orders()),
+        ChangeNotifierProvider(create: (context) => UserPreferences()),
+        ChangeNotifierProvider(create: (context) => Analytics()),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
           title: 'Get Table Service Host',
           theme: ThemeData(
-            primarySwatch: Colors.blue,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            fontFamily: 'MyriadPro',
-          ),
-          //home: RestaurantScreen(),
+              primarySwatch: Colors.blue,
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              fontFamily: 'MyriadPro',
+              backgroundColor: Colors.white,
+              scaffoldBackgroundColor: Colors.white),
           home: FutureBuilder(
               future: auth.fetchUserDetails(),
               builder: (ctx, snapshot) =>

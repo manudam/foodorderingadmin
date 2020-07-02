@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
-import 'package:foodorderingadmin/providers/menu.dart';
+import 'package:foodorderingadmin/providers/userpreferences.dart';
 import 'package:provider/provider.dart';
 
 class CategoryItem extends StatelessWidget {
@@ -10,19 +10,19 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var products = Provider.of<Menu>(context);
+    var userPreferences = Provider.of<UserPreferences>(context);
 
     return Row(
       children: [
         ChoiceChip(
-          selected: products.selectedCategory == category,
+          selected: userPreferences.selectedCategory == category,
           label: Text(
             category,
             style: TextStyle(color: Colors.white),
           ),
           selectedColor: kGreen,
           onSelected: (bool selection) {
-            products.selectCategory(category);
+            userPreferences.selectCategory(category);
           },
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(6))),

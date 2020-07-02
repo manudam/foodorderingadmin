@@ -46,7 +46,7 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: BaseAppBar(
-        title: "Archive",
+        title: "Archived",
         backgroundColor: kLightGreyBackground,
         textColor: Colors.black,
         appBar: AppBar(),

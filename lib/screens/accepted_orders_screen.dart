@@ -52,6 +52,7 @@ class _AcceptedOrdersScreenScreenState extends State<AcceptedOrdersScreen> {
       ),
       drawer: AppDrawer(),
       body: Container(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
         color: kLightGreyBackground,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,

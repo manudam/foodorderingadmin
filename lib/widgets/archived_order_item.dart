@@ -22,7 +22,7 @@ class _ArchivedOrderItemState extends State<ArchivedOrderItem> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Card(
+          Material(
             child: Container(
               padding: EdgeInsets.all(20),
               width: 280,

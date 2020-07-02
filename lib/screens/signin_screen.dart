@@ -2,7 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
-import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
+import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:foodorderingadmin/widgets/form_input_field_with_icon.dart';
 import 'package:foodorderingadmin/widgets/form_vertical_space.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
@@ -155,8 +155,13 @@ class _SigninScreenState extends State<SigninScreen> {
                                 });
 
                                 try {
-                                  await _auth.login(
+                                  var result = await _auth.login(
                                       _email.text, _password.text);
+
+                                  if (result) {
+                                    Navigator.of(context)
+                                        .pushNamed(LiveOrdersScreen.routeName);
+                                  }
                                 } catch (exception) {
                                   _showMyDialog("Error", exception.message);
                                 } finally {

@@ -53,6 +53,7 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
       ),
       drawer: AppDrawer(),
       body: Container(
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
         color: kGreyBackground,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,

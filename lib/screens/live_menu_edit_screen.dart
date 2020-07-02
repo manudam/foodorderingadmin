@@ -48,14 +48,18 @@ class _LiveMenuEditScreenState extends State<LiveMenuEditScreen> {
         backgroundColor: kLightGreyBackground,
         textColor: Colors.black,
         actions: [
-          IconButton(
-            icon: Icon(
-              Icons.add_circle,
-              color: kYellow,
+          Container(
+            width: 100,
+            child: IconButton(
+              icon: Icon(
+                Icons.add_circle,
+                size: 50,
+                color: kYellow,
+              ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(ProductEditScreen.routeName);
+              },
             ),
-            onPressed: () {
-              Navigator.of(context).pushNamed(ProductEditScreen.routeName);
-            },
           )
         ],
         appBar: AppBar(),
@@ -70,6 +74,7 @@ class _LiveMenuEditScreenState extends State<LiveMenuEditScreen> {
               CategoryPicker(),
               Expanded(
                 child: Container(
+                  padding: const EdgeInsets.only(left: 20),
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal, child: ProductList()),
                 ),

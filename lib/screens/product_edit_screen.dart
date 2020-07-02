@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
+import 'package:foodorderingadmin/providers/userpreferences.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:provider/provider.dart';
@@ -59,8 +60,11 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           'isVegeterian': _editedProduct.isVegeterian,
         };
       }
+
       if (_initValues['category'].toString().isEmpty)
-        _initValues['category'] = menuData.selectedCategory;
+        _initValues['category'] =
+            Provider.of<UserPreferences>(context, listen: false)
+                .selectedCategory;
     }
 
     _isInit = false;

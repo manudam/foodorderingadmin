@@ -12,19 +12,22 @@ class ArchivedOrderList extends StatelessWidget {
     var loggedInUser = Provider.of<Auth>(context).loggedInUser;
     var orderData = Provider.of<Orders>(context, listen: false);
 
-    return FutureBuilder(
-        future: orderData.fetchArchivedOrders(
-            selectedOrderDay.orderDate, loggedInUser),
-        builder: (ctx, snapshot) {
-          if (snapshot.hasData) {
-            var orders = snapshot.data;
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: orders.length,
-              itemBuilder: (ctx, i) => ArchivedOrderItem(orders[i]),
-            );
-          }
-          return Container();
-        });
+    return Container(
+      padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+      child: FutureBuilder(
+          future: orderData.fetchArchivedOrders(
+              selectedOrderDay.orderDate, loggedInUser),
+          builder: (ctx, snapshot) {
+            if (snapshot.hasData) {
+              var orders = snapshot.data;
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: orders.length,
+                itemBuilder: (ctx, i) => ArchivedOrderItem(orders[i]),
+              );
+            }
+            return Container();
+          }),
+    );
   }
 }

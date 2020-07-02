@@ -6,9 +6,9 @@ class User {
 
   User({this.uid, this.email, this.name, this.restaurantId});
 
-  factory User.fromMap(Map data) {
+  factory User.fromMap(String documentId, Map data) {
     return User(
-      uid: data['uid'],
+      uid: documentId,
       email: data['email'] ?? '',
       name: data['name'] ?? '',
       restaurantId: data['restaurantId'] ?? '',
@@ -16,7 +16,6 @@ class User {
   }
 
   Map<String, dynamic> toJson() => {
-        "uid": uid,
         "email": email,
         "name": name,
         "restaurantId": restaurantId,

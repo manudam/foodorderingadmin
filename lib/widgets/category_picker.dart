@@ -16,7 +16,7 @@ class _State extends State<CategoryPicker> {
     final categories = restaurant != null ? restaurant.categories : [];
 
     return Container(
-        padding: EdgeInsets.only(left: 10),
+        padding: EdgeInsets.only(left: 30),
         height: 50,
         child: ListView.builder(
             scrollDirection: Axis.horizontal,
