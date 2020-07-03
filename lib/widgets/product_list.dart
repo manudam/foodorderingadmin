@@ -19,7 +19,7 @@ class ProductList extends StatelessWidget {
 
     products.forEach((product) {
       cards.add(Container(
-        width: 300,
+        width: 350,
         child: Container(
           margin: EdgeInsets.all(10),
           child: Material(
@@ -29,7 +29,8 @@ class ProductList extends StatelessWidget {
                 padding: const EdgeInsets.only(left: 0, right: 0),
                 child: Text(
                   product.name,
-                  style: kMediumText,
+                  style:
+                      product.disabled ? kMediumStrikeThroughText : kMediumText,
                 ),
               ),
               leading: Container(
@@ -38,8 +39,8 @@ class ProductList extends StatelessWidget {
                       ? Align(
                           alignment: Alignment.topLeft,
                           child: Icon(
-                            Icons.close,
-                            color: kGreyBackground,
+                            Icons.indeterminate_check_box,
+                            color: Colors.grey,
                           ),
                         )
                       : Align(

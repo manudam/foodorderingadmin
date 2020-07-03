@@ -80,7 +80,9 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    String category = "";
+    String category = widget.order.products.length > 0
+        ? widget.order.products[0].category
+        : "";
 
     return Container(
       margin: EdgeInsets.only(left: 20, right: 10, top: 10),
@@ -111,7 +113,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                   ),
                   Container(
                     height:
-                        (50 + (widget.order.products.length * 30)).toDouble(),
+                        (50 + (widget.order.products.length * 22)).toDouble(),
                     child: ListView.builder(
                         itemCount: widget.order.products.length,
                         itemBuilder: (ctx, i) {
@@ -125,8 +127,8 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                             padding: EdgeInsets.only(
                                 left: 0,
                                 right: 0,
-                                top: 0,
-                                bottom: newCategory ? 20 : 0),
+                                top: newCategory ? 20 : 0,
+                                bottom: 0),
                             child: Row(
                               children: [
                                 Text(

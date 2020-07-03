@@ -1,17 +1,49 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
+import 'package:foodorderingadmin/providers/orders.dart';
 import 'package:provider/provider.dart';
 import '../screens/screens.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
+  @override
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  bool _isInit = false;
+
+  @override
+  void didChangeDependencies() {
+    if (!_isInit) {
+      var loggedInUser = Provider.of<Auth>(context).loggedInUser;
+      Provider.of<Orders>(context).streamLiveOrders(loggedInUser);
+
+      _isInit = true;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final orders = Provider.of<Orders>(context).liveOrders;
+
     return Drawer(
       child: SafeArea(
         child: Column(
           children: <Widget>[
             ListTile(
-              title: Text('New Orders'),
+              title: Container(
+                alignment: Alignment.centerLeft,
+                child: Badge(
+                  badgeContent: Text(
+                    orders.length.toString(),
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  child: Text('New Orders'),
+                  position: BadgePosition.topRight(right: -25),
+                ),
+              ),
               onTap: () {
                 Navigator.of(context)
                     .pushReplacementNamed(LiveOrdersScreen.routeName);

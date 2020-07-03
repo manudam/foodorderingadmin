@@ -6,6 +6,9 @@ const TextStyle kTitleText =
 
 const TextStyle kMediumText = TextStyle(fontSize: 18);
 
+const TextStyle kMediumStrikeThroughText =
+    TextStyle(fontSize: 18, decoration: TextDecoration.lineThrough);
+
 const TextStyle kGreySubTitle =
     TextStyle(fontWeight: FontWeight.w300, fontSize: 14, color: Colors.grey);
 

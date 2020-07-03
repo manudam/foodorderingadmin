@@ -5,19 +5,18 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Color backgroundColor;
   final Color textColor;
   final List<Widget> actions;
-
   final AppBar appBar;
   final List<Widget> widgets;
 
-  const BaseAppBar(
-      {Key key,
-      this.appBar,
-      this.widgets,
-      this.title,
-      this.backgroundColor,
-      this.textColor,
-      this.actions})
-      : super(key: key);
+  const BaseAppBar({
+    Key key,
+    this.appBar,
+    this.widgets,
+    this.title,
+    this.backgroundColor,
+    this.textColor,
+    this.actions,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,13 +25,9 @@ class BaseAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0.0,
       elevation: 0.0,
       backgroundColor: this.backgroundColor,
-      title: Transform(
-        // you can forcefully translate values left side using Transform
-        transform: Matrix4.translationValues(-8.0, 0.0, 0.0),
-        child: Text(
-          title,
-          style: TextStyle(color: textColor, fontFamily: 'CenturyGothic'),
-        ),
+      title: Text(
+        title,
+        style: TextStyle(color: textColor, fontFamily: 'CenturyGothic'),
       ),
       iconTheme: new IconThemeData(color: Colors.grey),
       actions: this.actions,

@@ -46,7 +46,7 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
 
     return Scaffold(
       appBar: BaseAppBar(
-        title: "Orders (${orders.length})",
+        title: "New Orders (${orders.length})",
         backgroundColor: kGreyBackground,
         textColor: Colors.white,
         appBar: AppBar(),
