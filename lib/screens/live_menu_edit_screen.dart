@@ -74,7 +74,7 @@ class _LiveMenuEditScreenState extends State<LiveMenuEditScreen> {
               CategoryPicker(),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.only(left: 20),
+                  padding: const EdgeInsets.only(left: 20, right: 20),
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal, child: ProductList()),
                 ),

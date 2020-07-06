@@ -54,10 +54,15 @@ class _AcceptedOrdersScreenScreenState extends State<AcceptedOrdersScreen> {
       body: Container(
         padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
         color: kLightGreyBackground,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: orders.length,
-          itemBuilder: (ctx, i) => AcceptedOrderItem(orders[i]),
+        child: SingleChildScrollView(
+          child: Container(
+            height: 1000,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: orders.length,
+              itemBuilder: (ctx, i) => AcceptedOrderItem(orders[i]),
+            ),
+          ),
         ),
       ),
     );

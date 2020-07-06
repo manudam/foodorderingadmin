@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
 import 'package:foodorderingadmin/providers/menu.dart';
-import 'package:foodorderingadmin/providers/userpreferences.dart';
+import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:provider/provider.dart';
 
@@ -10,8 +10,7 @@ class ProductList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final menuData = Provider.of<Menu>(context);
-    final selectedCategory =
-        Provider.of<UserPreferences>(context).selectedCategory;
+    final selectedCategory = Provider.of<Restaurants>(context).selectedCategory;
     final products = menuData.findByCategory(selectedCategory);
     var loggedInUser = Provider.of<Auth>(context).loggedInUser;
 

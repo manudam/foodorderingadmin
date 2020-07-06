@@ -7,6 +7,10 @@ import '../helpers/helpers.dart';
 class Restaurants with ChangeNotifier {
   final _databaseReference = Firestore.instance;
   Restaurant restaurant;
+  String selectedCategory;
+
+  List<String> get categories =>
+      restaurant != null ? restaurant.categories : [];
 
   Future<void> fetchRestaurantDetails(String restaurantId) async {
     var restaurantDoc = await _databaseReference
@@ -16,6 +20,15 @@ class Restaurants with ChangeNotifier {
 
     restaurant = Restaurant.fromMap(restaurantId, restaurantDoc.data);
 
+    if (categories.length > 0) {
+      selectedCategory = categories[0];
+    }
+
+    notifyListeners();
+  }
+
+  void selectCategory(String category) {
+    selectedCategory = category;
     notifyListeners();
   }
 }

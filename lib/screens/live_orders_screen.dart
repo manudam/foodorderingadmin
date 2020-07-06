@@ -55,10 +55,15 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
       body: Container(
         padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
         color: kGreyBackground,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: orders.length,
-          itemBuilder: (ctx, i) => LiveOrderItem(orders[i]),
+        child: SingleChildScrollView(
+          child: Container(
+            height: 1000,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: orders.length,
+              itemBuilder: (ctx, i) => LiveOrderItem(orders[i]),
+            ),
+          ),
         ),
       ),
     );

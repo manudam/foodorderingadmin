@@ -60,9 +60,12 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
             child: OrderDatePicker(),
           ),
           Expanded(
-            child: Container(
-              color: kGreyBackground,
-              child: ArchivedOrderList(),
+            child: SingleChildScrollView(
+              child: Container(
+                height: 1000,
+                color: kGreyBackground,
+                child: ArchivedOrderList(),
+              ),
             ),
           )
         ],

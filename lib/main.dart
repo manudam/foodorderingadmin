@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
-import 'package:foodorderingadmin/providers/userpreferences.dart';
 import 'package:foodorderingadmin/screens/splash_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
@@ -36,12 +35,11 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => Menu()),
         ChangeNotifierProvider(create: (context) => Restaurants()),
         ChangeNotifierProvider(create: (context) => Orders()),
-        ChangeNotifierProvider(create: (context) => UserPreferences()),
         ChangeNotifierProvider(create: (context) => Analytics()),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
-          title: 'Get Table Service Host',
+          title: 'GetTableService-Host',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
               primarySwatch: Colors.blue,

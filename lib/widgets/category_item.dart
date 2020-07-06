@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
-import 'package:foodorderingadmin/providers/userpreferences.dart';
+import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:provider/provider.dart';
 
 class CategoryItem extends StatelessWidget {
@@ -10,7 +10,7 @@ class CategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var userPreferences = Provider.of<UserPreferences>(context);
+    var userPreferences = Provider.of<Restaurants>(context);
 
     return Row(
       children: [
