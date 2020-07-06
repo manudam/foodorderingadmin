@@ -53,6 +53,8 @@ flutter_icons:
   image_path: "images/HostAppIcon.png"
   android: true 
   ios: true
+  adaptive_icon_background: "images/Background.png"
+  adaptive_icon_foreground: "images/ForegroundHost.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
