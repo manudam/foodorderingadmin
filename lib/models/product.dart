@@ -9,6 +9,9 @@ class Product {
   bool disabled;
   bool isVegan;
   bool isVegeterian;
+  bool isDairyFree;
+  bool isGlutenFree;
+  bool isNutFree;
 
   Product(
       {@required this.id,
@@ -18,7 +21,10 @@ class Product {
       @required this.category,
       this.disabled = false,
       this.isVegan = false,
-      this.isVegeterian = false});
+      this.isVegeterian = false,
+      this.isDairyFree = false,
+      this.isGlutenFree = false,
+      this.isNutFree = false});
 
   factory Product.fromMap(String documentId, Map data) {
     return Product(
@@ -31,6 +37,9 @@ class Product {
       disabled: data['disabled'] ?? false,
       isVegan: data['isVegan'] ?? false,
       isVegeterian: data['isVegeterian'] ?? false,
+      isDairyFree: data['isDairyFree'] ?? false,
+      isGlutenFree: data['isGlutenFree'] ?? false,
+      isNutFree: data['isNutFree'] ?? false,
     );
   }
 
@@ -41,6 +50,9 @@ class Product {
         "category": category,
         "disabled": disabled,
         "isVegan": isVegan,
-        "isVegeterian": isVegeterian
+        "isVegeterian": isVegeterian,
+        "isDairyFree": isDairyFree,
+        "isGlutenFree": isGlutenFree,
+        "isNutFree": isNutFree
       };
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
+import 'package:foodorderingadmin/widgets/form_vertical_space.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +40,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     'category': '',
     'isVegan': false,
     'isVegetarian': false,
+    'isDairyFree': false,
+    'isGlutenFree': false,
+    'isNutFree': false,
   };
   var _isInit = true;
   var _loading = false;
@@ -57,6 +61,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           'category': _editedProduct.category,
           'isVegan': _editedProduct.isVegan,
           'isVegeterian': _editedProduct.isVegeterian,
+          'isDairyFree': _editedProduct.isDairyFree,
+          'isGlutenFree': _editedProduct.isGlutenFree,
+          'isNutFree': _editedProduct.isNutFree,
         };
       }
 
@@ -88,6 +95,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
 //update tags
       _editedProduct.isVegan = _initValues['isVegan'];
       _editedProduct.isVegeterian = _initValues['isVegetarian'];
+      _editedProduct.isDairyFree = _initValues['isDairyFree'];
+      _editedProduct.isGlutenFree = _initValues['isGlutenFree'];
+      _editedProduct.isNutFree = _initValues['isNutFree'];
 
       final isValid = _form.currentState.validate();
       if (!isValid) {
@@ -126,14 +136,18 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           inAsyncCall: _loading,
           color: Theme.of(context).scaffoldBackgroundColor,
           child: Padding(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.only(left: 20, right: 20, top: 10),
             child: SingleChildScrollView(
               child: Form(
                 key: _form,
                 child: Column(children: [
+                  SizedBox(
+                    height: 3,
+                  ),
                   DropdownButtonFormField(
                     isExpanded: false,
-                    decoration: InputDecoration(labelText: 'Category'),
+                    decoration: InputDecoration(
+                        labelText: 'Category', border: OutlineInputBorder()),
                     items: categories
                         ?.map((item) => DropdownMenuItem(
                               child: Padding(
@@ -158,9 +172,13 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       return null;
                     },
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   TextFormField(
                     initialValue: _initValues['name'],
-                    decoration: InputDecoration(labelText: 'Name'),
+                    decoration: InputDecoration(
+                        labelText: 'Name', border: OutlineInputBorder()),
                     textInputAction: TextInputAction.next,
                     focusNode: _nameFocusNode,
                     onFieldSubmitted: (_) {
@@ -169,7 +187,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     },
                     validator: (value) {
                       if (value.isEmpty) {
-                        return 'Please provide a value.';
+                        return 'Please enter a name.';
                       }
                       return null;
                     },
@@ -177,9 +195,13 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       _editedProduct.name = value;
                     },
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   TextFormField(
                     initialValue: _initValues['description'],
-                    decoration: InputDecoration(labelText: 'Description'),
+                    decoration: InputDecoration(
+                        labelText: 'Description', border: OutlineInputBorder()),
                     maxLines: 3,
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.multiline,
@@ -187,19 +209,19 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     onFieldSubmitted: (_) {
                       FocusScope.of(context).requestFocus(_priceFocusNode);
                     },
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter a description.';
-                      }
-                      return null;
-                    },
                     onSaved: (value) {
                       _editedProduct.description = value;
                     },
                   ),
+                  SizedBox(
+                    height: 10,
+                  ),
                   TextFormField(
                     initialValue: _initValues['price'],
-                    decoration: InputDecoration(labelText: 'Price'),
+                    decoration: InputDecoration(
+                        labelText: 'Price',
+                        border: OutlineInputBorder(),
+                        prefixText: "£ "),
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
                     focusNode: _priceFocusNode,
@@ -210,8 +232,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       if (double.tryParse(value) == null) {
                         return 'Please enter a valid number.';
                       }
-                      if (double.parse(value) <= 0) {
-                        return 'Please enter a number greater than zero.';
+                      if (double.parse(value) < 0) {
+                        return 'Price can not be negative.';
                       }
                       return null;
                     },
@@ -230,7 +252,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            "Tags",
+                            "  Tags",
                             style: TextStyle(color: Colors.grey),
                           ),
                         ),
@@ -238,33 +260,84 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     ),
                   ),
                   Container(
-                    height: 200,
-                    width: 120,
-                    child: ListView(
+                    height: 240,
+                    width: 300,
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      runAlignment: WrapAlignment.start,
                       children: [
-                        CheckboxListTile(
-                          value: _initValues["isVegeterian"] ?? false,
-                          title: Text("V"),
-                          onChanged: (value) {
-                            setState(() {
-                              _initValues["isVegeterian"] = value;
-                            });
-                          },
+                        Container(
+                          width: 150,
+                          child: CheckboxListTile(
+                            value: _initValues["isVegeterian"] ?? false,
+                            title: Image(
+                              image: AssetImage("images/Veggie.png"),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _initValues["isVegeterian"] = value;
+                              });
+                            },
+                          ),
                         ),
-                        CheckboxListTile(
-                          value: _initValues["isVegan"] ?? false,
-                          title: Text("VG"),
-                          onChanged: (value) {
-                            setState(() {
-                              _initValues["isVegan"] = value;
-                            });
-                          },
+                        Container(
+                          width: 150,
+                          child: CheckboxListTile(
+                            value: _initValues["isVegan"] ?? false,
+                            title: Image(
+                              image: AssetImage("images/Vegan.png"),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _initValues["isVegan"] = value;
+                              });
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: 150,
+                          child: CheckboxListTile(
+                            value: _initValues["isDairyFree"] ?? false,
+                            title: Image(
+                              image: AssetImage("images/DairyFree.png"),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _initValues["isDairyFree"] = value;
+                              });
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: 150,
+                          child: CheckboxListTile(
+                            value: _initValues["isGlutenFree"] ?? false,
+                            title: Image(
+                              image: AssetImage("images/GlutenFree.png"),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _initValues["isGlutenFree"] = value;
+                              });
+                            },
+                          ),
+                        ),
+                        Container(
+                          width: 150,
+                          child: CheckboxListTile(
+                            value: _initValues["isNutFree"] ?? false,
+                            title: Image(
+                              image: AssetImage("images/NutFree.png"),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                _initValues["isNutFree"] = value;
+                              });
+                            },
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
