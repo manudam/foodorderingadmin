@@ -11,6 +11,7 @@ import './providers/menu.dart';
 import './providers/auth.dart';
 
 import './screens/screens.dart';
+import 'helpers/constants.dart';
 
 void main() async {
   // Set `enableInDevMode` to true to see reports while in debug mode
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
           title: 'GetTableService-Host',
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
-              primarySwatch: Colors.blue,
+              primarySwatch: kGreenMaterial,
               visualDensity: VisualDensity.adaptivePlatformDensity,
               fontFamily: 'MyriadPro',
               backgroundColor: Colors.white,

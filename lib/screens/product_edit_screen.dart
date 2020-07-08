@@ -3,7 +3,6 @@ import 'package:foodorderingadmin/formatters/decimal_text_input_formatter.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
-import 'package:foodorderingadmin/widgets/form_vertical_space.dart';
 import 'package:foodorderingadmin/widgets/loading_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -25,14 +24,13 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   final _form = GlobalKey<FormState>();
 
   var _editedProduct = Product(
-    id: null,
-    name: '',
-    price: 0,
-    description: '',
-    category: '',
-    isVegan: false,
-    isVegeterian: false,
-  );
+      id: null,
+      name: '',
+      price: 0,
+      description: '',
+      category: '',
+      isVegan: false,
+      isVegeterian: false);
 
   var _initValues = {
     'name': '',

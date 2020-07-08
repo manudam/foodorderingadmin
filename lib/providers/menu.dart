@@ -20,6 +20,7 @@ class Menu with ChangeNotifier {
         .collection(DatabaseCollectionNames.restaurants)
         .document(restaurantId)
         .collection(DatabaseCollectionNames.products)
+        .orderBy("createdDate")
         .getDocuments();
 
     for (var document in documents.documents) {
@@ -39,6 +40,9 @@ class Menu with ChangeNotifier {
   }
 
   Future<void> addProduct(Product productToSave, User loggedInUser) async {
+    productToSave.createdBy = loggedInUser.name;
+    productToSave.createdDate = DateTime.now();
+
     var savedProduct = await _databaseReference
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedInUser.restaurantId)

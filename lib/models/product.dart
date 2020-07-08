@@ -12,6 +12,8 @@ class Product {
   bool isDairyFree;
   bool isGlutenFree;
   bool isNutFree;
+  DateTime createdDate;
+  String createdBy;
 
   Product(
       {@required this.id,
@@ -24,7 +26,9 @@ class Product {
       this.isVegeterian = false,
       this.isDairyFree = false,
       this.isGlutenFree = false,
-      this.isNutFree = false});
+      this.isNutFree = false,
+      this.createdDate,
+      this.createdBy});
 
   factory Product.fromMap(String documentId, Map data) {
     return Product(
@@ -40,6 +44,9 @@ class Product {
       isDairyFree: data['isDairyFree'] ?? false,
       isGlutenFree: data['isGlutenFree'] ?? false,
       isNutFree: data['isNutFree'] ?? false,
+      createdDate:
+          data['createdDate'] != null ? data['createdDate'].toDate() : null,
+      createdBy: data['createdBy'] ?? '',
     );
   }
 
@@ -53,6 +60,8 @@ class Product {
         "isVegeterian": isVegeterian,
         "isDairyFree": isDairyFree,
         "isGlutenFree": isGlutenFree,
-        "isNutFree": isNutFree
+        "isNutFree": isNutFree,
+        "createdDate": createdDate,
+        "createdBy": createdBy
       };
 }

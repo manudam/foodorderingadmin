@@ -23,7 +23,7 @@ class TransactionDetails extends StatelessWidget {
         children: [
           Text("Name given: ${orderItem.paymentDetails.cardHolderName}"),
           Text("Email: ${orderItem.paymentDetails.receiptEmail}"),
-          Text("Order Number: ${orderItem.orderNumber.toString()}"),
+          Text("Order number: ${orderItem.orderNumber.toString()}"),
           Wrap(children: [
             Text("Stripe transaction ID: "),
             GestureDetector(
@@ -33,6 +33,7 @@ class TransactionDetails extends StatelessWidget {
             ),
           ]),
           Text("Sub Total: £${orderItem.subTotal.toStringAsFixed(2)}"),
+          Text("Small order fee: £${orderItem.fees.toStringAsFixed(2)}"),
           Text("Tip: £${orderItem.tip.toStringAsFixed(2)}"),
           Text("Total paid: £${orderItem.total.toStringAsFixed(2)}"),
         ],
