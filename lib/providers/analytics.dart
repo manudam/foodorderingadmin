@@ -5,6 +5,8 @@ import 'package:foodorderingadmin/models/analytics.dart';
 import 'package:foodorderingadmin/models/order_item.dart';
 import 'package:foodorderingadmin/models/user.dart';
 
+const String dayOrderSummaryDocName = "DayOrderAnalytic";
+
 class Analytics extends ChangeNotifier {
   final _databaseReference = Firestore.instance;
 
@@ -16,21 +18,19 @@ class Analytics extends ChangeNotifier {
       [..._dayOrderAnalytic.dayOrderSummary];
 
   Future<void> fetchAnalytics(User loggedInUser) async {
-    var documents = await _databaseReference
+    var document = await _databaseReference
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedInUser.restaurantId)
         .collection(DatabaseCollectionNames.analytics)
-        .where("name", isEqualTo: "DayOrderAnalytic")
-        .getDocuments();
+        .document(dayOrderSummaryDocName)
+        .get();
 
-    for (var document in documents.documents) {
-      _dayOrderAnalytic =
-          DayOrderAnalytic.fromMap(document.documentID, document.data);
+    if (document.exists) {
+      _dayOrderAnalytic = DayOrderAnalytic.fromMap(document.data);
     }
 
     if (_dayOrderAnalytic == null) {
-      _dayOrderAnalytic =
-          DayOrderAnalytic(name: "DayOrderAnalytic", dayOrderSummary: []);
+      _dayOrderAnalytic = DayOrderAnalytic(dayOrderSummary: []);
 
       await _saveDayOrderAnalytic(loggedInUser.restaurantId);
     }
@@ -72,20 +72,19 @@ class Analytics extends ChangeNotifier {
   }
 
   Future<void> _saveDayOrderAnalytic(String restaurantId) async {
-    if (_dayOrderAnalytic.id == null) {
-      var savedAnalytic = await _databaseReference
+    if (_dayOrderAnalytic.dayOrderSummary.length == 0) {
+      await _databaseReference
           .collection(DatabaseCollectionNames.restaurants)
           .document(restaurantId)
           .collection(DatabaseCollectionNames.analytics)
-          .add(_dayOrderAnalytic.toJson());
-
-      _dayOrderAnalytic.id = savedAnalytic.documentID;
+          .document(dayOrderSummaryDocName)
+          .setData(_dayOrderAnalytic.toJson());
     } else {
       await _databaseReference
           .collection(DatabaseCollectionNames.restaurants)
           .document(restaurantId)
           .collection(DatabaseCollectionNames.analytics)
-          .document(_dayOrderAnalytic.id)
+          .document(dayOrderSummaryDocName)
           .updateData(_dayOrderAnalytic.toJson());
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/formatters/decimal_text_input_formatter.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
@@ -223,14 +224,18 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                         border: OutlineInputBorder(),
                         prefixText: "£ "),
                     textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
+                    keyboardType:
+                        TextInputType.numberWithOptions(decimal: true),
                     focusNode: _priceFocusNode,
+                    inputFormatters: [
+                      DecimalTextInputFormatter(decimalRange: 2)
+                    ],
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter a price.';
                       }
                       if (double.tryParse(value) == null) {
-                        return 'Please enter a valid number.';
+                        return 'Please enter a valid price.';
                       }
                       if (double.parse(value) < 0) {
                         return 'Price can not be negative.';
@@ -342,28 +347,34 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      MaterialButton(
-                        child: Text(
-                          "Save",
-                          style: TextStyle(color: Colors.white),
+                      Container(
+                        width: 150,
+                        child: MaterialButton(
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          color: kYellow,
+                          onPressed: () {
+                            _saveForm();
+                          },
                         ),
-                        color: kYellow,
-                        onPressed: () {
-                          _saveForm();
-                        },
                       ),
                       SizedBox(
                         width: 20,
                       ),
-                      MaterialButton(
-                        child: Text(
-                          "Cancel",
-                          style: TextStyle(color: Colors.white),
+                      Container(
+                        width: 150,
+                        child: MaterialButton(
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
+                          color: Colors.grey,
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
                         ),
-                        color: Colors.grey,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
                       )
                     ],
                   )

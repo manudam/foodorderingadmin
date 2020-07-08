@@ -1,14 +1,10 @@
 class DayOrderAnalytic {
-  String id;
-  String name;
   List<DayOrderSummary> dayOrderSummary = [];
 
-  DayOrderAnalytic({this.id, this.name, this.dayOrderSummary});
+  DayOrderAnalytic({this.dayOrderSummary});
 
-  factory DayOrderAnalytic.fromMap(String documentId, Map data) {
+  factory DayOrderAnalytic.fromMap(Map data) {
     return DayOrderAnalytic(
-      id: documentId,
-      name: data['name'],
       dayOrderSummary: (data['dayOrderSummary'] as List<dynamic>)
           .map((item) => DayOrderSummary.fromMap(item))
           .toList(),
@@ -16,8 +12,6 @@ class DayOrderAnalytic {
   }
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "name": name,
         "dayOrderSummary": dayOrderSummary.map((dos) => dos.toJson()).toList(),
       };
 }

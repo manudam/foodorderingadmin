@@ -23,7 +23,7 @@ class TransactionDetails extends StatelessWidget {
         children: [
           Text("Name given: ${orderItem.paymentDetails.cardHolderName}"),
           Text("Email: ${orderItem.paymentDetails.receiptEmail}"),
-          Text("Order ID: ${orderItem.id}"),
+          Text("Order Number: ${orderItem.orderNumber.toString()}"),
           Wrap(children: [
             Text("Stripe transaction ID: "),
             GestureDetector(

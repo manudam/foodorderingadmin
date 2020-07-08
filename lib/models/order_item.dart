@@ -7,9 +7,11 @@ import 'cart_item.dart';
 
 class OrderItem {
   String id;
+  final int orderNumber;
   final double total;
   final double subTotal;
   final double tip;
+
   final List<CartItem> products;
   final DateTime orderDate;
   final PaymentDetails paymentDetails;
@@ -22,6 +24,7 @@ class OrderItem {
 
   OrderItem(
       {this.id,
+      @required this.orderNumber,
       @required this.total,
       @required this.subTotal,
       @required this.tip,
@@ -38,6 +41,7 @@ class OrderItem {
   factory OrderItem.fromMap(String documentId, Map data) {
     return OrderItem(
         id: documentId,
+        orderNumber: data['orderNumber'] ?? 0,
         total: data['total'] != null
             ? double.parse(data['total'].toString())
             : 0.00,

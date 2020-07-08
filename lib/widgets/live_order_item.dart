@@ -173,7 +173,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
           FlatButton(
             padding: EdgeInsets.all(7.5),
             child: Text(
-              "more details",
+              "more details #${widget.order.orderNumber.toString()}",
               style: kGreenNormalText,
             ),
             onPressed: () {

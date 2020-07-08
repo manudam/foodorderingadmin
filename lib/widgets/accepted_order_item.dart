@@ -38,6 +38,8 @@ class _AcceptedOrderItemState extends State<AcceptedOrderItem> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                      "Order created: ${DateFormat("dd/MM/yyyy HH:mm").format(widget.order.orderDate.toLocal())}"),
                   TransactionDetails(widget.order),
                   SizedBox(
                     height: 20,
