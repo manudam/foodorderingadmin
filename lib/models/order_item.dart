@@ -11,7 +11,7 @@ class OrderItem {
   final double total;
   final double subTotal;
   final double tip;
-
+  final double fees;
   final List<CartItem> products;
   final DateTime orderDate;
   final PaymentDetails paymentDetails;
@@ -28,6 +28,7 @@ class OrderItem {
       @required this.total,
       @required this.subTotal,
       @required this.tip,
+      @required this.fees,
       @required this.products,
       @required this.orderDate,
       @required this.paymentDetails,
@@ -49,6 +50,7 @@ class OrderItem {
             ? double.parse(data['subTotal'].toString())
             : 0.00,
         tip: data['tip'] != null ? double.parse(data['tip'].toString()) : 0.00,
+        fees: data['tip'] != null ? double.parse(data['tip'].toString()) : 0.00,
         orderDate:
             data['orderDate'] != null ? data['orderDate'].toDate() : null,
         orderStatus: data['orderStatus'] != null
@@ -82,6 +84,7 @@ class OrderItem {
         "total": total,
         "subTotal": subTotal,
         "tip": tip,
+        "fees": fees,
         "orderDate": orderDate,
         "notes": notes,
         "restaurantId": restaurantId,
