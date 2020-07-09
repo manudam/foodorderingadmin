@@ -50,7 +50,8 @@ class OrderItem {
             ? double.parse(data['subTotal'].toString())
             : 0.00,
         tip: data['tip'] != null ? double.parse(data['tip'].toString()) : 0.00,
-        fees: data['tip'] != null ? double.parse(data['tip'].toString()) : 0.00,
+        fees:
+            data['fees'] != null ? double.parse(data['fees'].toString()) : 0.00,
         orderDate:
             data['orderDate'] != null ? data['orderDate'].toDate() : null,
         orderStatus: data['orderStatus'] != null

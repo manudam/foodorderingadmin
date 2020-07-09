@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/models.dart';
 import '../helpers/helpers.dart';
+
+const String standardMenuDocName = "StandardMenu";
 
 class Menu with ChangeNotifier {
   final _databaseReference = Firestore.instance;
@@ -16,17 +19,24 @@ class Menu with ChangeNotifier {
   Future<void> fetchMenu(String restaurantId) async {
     _products.clear();
 
-    var documents = await _databaseReference
+    var document = await _databaseReference
         .collection(DatabaseCollectionNames.restaurants)
         .document(restaurantId)
-        .collection(DatabaseCollectionNames.products)
-        .orderBy("createdDate")
-        .getDocuments();
+        .collection(DatabaseCollectionNames.menu)
+        .document(standardMenuDocName)
+        .get();
 
-    for (var document in documents.documents) {
-      print(document.data);
-      _products.add(Product.fromMap(document.documentID, document.data));
-    }
+    print(document.data);
+
+    var products = (document.data['products'] as List<dynamic>)
+        .map((item) => Product.fromMap(item))
+        .toList();
+
+    _products.addAll(products);
+
+    _products.sort((a, b) => a.createdDate != null && b.createdDate != null
+        ? a.createdDate.compareTo(b.createdDate)
+        : 0);
 
     notifyListeners();
   }
@@ -42,19 +52,11 @@ class Menu with ChangeNotifier {
   Future<void> addProduct(Product productToSave, User loggedInUser) async {
     productToSave.createdBy = loggedInUser.name;
     productToSave.createdDate = DateTime.now();
+    productToSave.id = Uuid().v1();
 
-    var savedProduct = await _databaseReference
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedInUser.restaurantId)
-        .collection(DatabaseCollectionNames.products)
-        .add(productToSave.toJson());
+    _products.add(productToSave);
 
-    productToSave.id = savedProduct.documentID;
-
-    _products.insert(
-      0,
-      productToSave,
-    );
+    await saveProducts(loggedInUser);
 
     notifyListeners();
   }
@@ -62,33 +64,33 @@ class Menu with ChangeNotifier {
   Future<void> updateProduct(
       String id, Product updatedProduct, User loggedInUser) async {
     final prodIndex = _products.indexWhere((prod) => prod.id == id);
-    if (prodIndex >= 0) {
-      await _databaseReference
-          .collection(DatabaseCollectionNames.restaurants)
-          .document(loggedInUser.restaurantId)
-          .collection(DatabaseCollectionNames.products)
-          .document(id)
-          .updateData(updatedProduct.toJson());
 
+    if (prodIndex >= 0) {
       _products[prodIndex] = updatedProduct;
 
+      await saveProducts(loggedInUser);
+
       notifyListeners();
-    } else {
-      print('...');
     }
   }
 
   Future<void> deleteProduct(String id, User loggedInUser) async {
     final existingProductIndex = _products.indexWhere((prod) => prod.id == id);
 
+    _products.removeAt(existingProductIndex);
+
+    await saveProducts(loggedInUser);
+
+    notifyListeners();
+  }
+
+  Future<void> saveProducts(User loggedInUser) async {
     await _databaseReference
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedInUser.restaurantId)
-        .collection(DatabaseCollectionNames.products)
-        .document(id)
-        .delete();
-
-    _products.removeAt(existingProductIndex);
-    notifyListeners();
+        .collection(DatabaseCollectionNames.menu)
+        .document(standardMenuDocName)
+        .setData({"products": _products.map((pr) => pr.toJson()).toList()},
+            merge: true);
   }
 }

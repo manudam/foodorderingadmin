@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 class Product {
   String id;
@@ -30,9 +31,9 @@ class Product {
       this.createdDate,
       this.createdBy});
 
-  factory Product.fromMap(String documentId, Map data) {
+  factory Product.fromMap(Map data) {
     return Product(
-      id: documentId,
+      id: data['id'] != null ? data['id'] : Uuid().v1(),
       name: data['name'],
       description: data['description'] ?? '',
       price:
@@ -51,6 +52,7 @@ class Product {
   }
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "name": name,
         "description": description,
         "price": price,
