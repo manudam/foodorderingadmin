@@ -1,5 +1,9 @@
+import 'dart:html';
+
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/models/order_item.dart';
+import 'package:foodorderingadmin/models/payment_option.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TransactionDetails extends StatelessWidget {
@@ -21,17 +25,21 @@ class TransactionDetails extends StatelessWidget {
     return SingleChildScrollView(
       child: ListBody(
         children: [
-          Text("Name given: ${orderItem.paymentDetails.cardHolderName}"),
-          Text("Email: ${orderItem.paymentDetails.receiptEmail}"),
+          Text("Name given: ${orderItem.paymentDetails.name}"),
+          Text("Email: ${orderItem.paymentDetails.email}"),
           Text("Order number: ${orderItem.orderNumber.toString()}"),
-          Wrap(children: [
-            Text("Stripe transaction ID: "),
-            GestureDetector(
-              onTap: () => _launchURL(orderItem.paymentDetails.paymentIntentId),
-              child: Text(orderItem.paymentDetails.paymentIntentId,
-                  style: TextStyle(decoration: TextDecoration.underline)),
-            ),
-          ]),
+          if (orderItem.paymentDetails.paymentOption == PaymentOption.Card)
+            Wrap(children: [
+              Text("Stripe transaction ID: "),
+              GestureDetector(
+                onTap: () =>
+                    _launchURL(orderItem.paymentDetails.paymentIntentId),
+                child: Text(orderItem.paymentDetails.paymentIntentId,
+                    style: TextStyle(decoration: TextDecoration.underline)),
+              ),
+            ]),
+          Text(
+              "Payment Method: ${EnumToString.parse(orderItem.paymentDetails.paymentOption)}"),
           Text("Sub Total: £${orderItem.subTotal.toStringAsFixed(2)}"),
           Text("Small order fee: £${orderItem.fees.toStringAsFixed(2)}"),
           Text("Tip: £${orderItem.tip.toStringAsFixed(2)}"),
