@@ -1,5 +1,7 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/helpers/constants.dart';
+import 'package:foodorderingadmin/models/payment_option.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
 import 'package:foodorderingadmin/providers/orders.dart';
@@ -66,6 +68,42 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
     );
   }
 
+  Future<void> _acceptPaymentDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+              '${EnumToString.parse(widget.order.paymentDetails.paymentOption)} payment'),
+          content: SingleChildScrollView(
+              child: Text(
+                  'Accepted payment of £${widget.order.total.toStringAsFixed(2)} by ${EnumToString.parse(widget.order.paymentDetails.paymentOption)} ')),
+          actions: <Widget>[
+            MaterialButton(
+              child: Text('Confirm', style: TextStyle(color: Colors.white)),
+              color: widget.order.orderLate ? Colors.red : kYellow,
+              onPressed: () async {
+                final loggedInUser =
+                    Provider.of<Auth>(context, listen: false).loggedInUser;
+                await Provider.of<Orders>(context, listen: false)
+                    .acceptPaymentOrder(widget.order, loggedInUser);
+                Navigator.of(context).pop();
+              },
+            ),
+            MaterialButton(
+              child: Text('Not Yet', style: TextStyle(color: Colors.white)),
+              color: Colors.grey,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _showTransactionDetails() async {
     return showDialog<void>(
       context: context,
@@ -83,6 +121,8 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
     String category = widget.order.products.length > 0
         ? widget.order.products[0].category
         : "";
+
+    print(EnumToString.parse(widget.order.paymentDetails.paymentOption));
 
     return Container(
       margin: EdgeInsets.only(left: 20, right: 10, top: 10),
@@ -153,18 +193,41 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                         style: TextStyle(color: Colors.grey),
                       ),
                     ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: MaterialButton(
-                      child: Text(
-                        "Accept",
-                        style: TextStyle(color: Colors.white),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MaterialButton(
+                        child: Text(
+                          "Accept",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        color: widget.order.orderLate ? Colors.red : kYellow,
+                        onPressed: () {
+                          if (widget.order.paymentDetails.paymentOption ==
+                              PaymentOption.Card) _showMyDialog();
+                          if (widget.order.paymentDetails.paymentOption !=
+                                  PaymentOption.Card &&
+                              widget.order.paymentAcceptedBy.isNotEmpty)
+                            _showMyDialog();
+                        },
                       ),
-                      color: widget.order.orderLate ? Colors.red : kYellow,
-                      onPressed: () {
-                        _showMyDialog();
-                      },
-                    ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      if (widget.order.paymentDetails.paymentOption !=
+                              PaymentOption.Card &&
+                          widget.order.paymentAcceptedBy.isEmpty)
+                        MaterialButton(
+                          child: Text(
+                            "${EnumToString.parse(widget.order.paymentDetails.paymentOption)} £${widget.order.total.toStringAsFixed(2)}",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: widget.order.orderLate ? Colors.red : kYellow,
+                          onPressed: () {
+                            _acceptPaymentDialog();
+                          },
+                        ),
+                    ],
                   ),
                 ],
               ),

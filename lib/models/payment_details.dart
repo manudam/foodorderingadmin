@@ -33,7 +33,7 @@ class PaymentDetails {
   }
 
   Map<String, dynamic> toJson() => {
-        'paymentOption': paymentOption.toString(),
+        'paymentOption': EnumToString.parse(paymentOption),
         'status': status,
         'paymentIntentId': paymentIntentId,
         'name': name,

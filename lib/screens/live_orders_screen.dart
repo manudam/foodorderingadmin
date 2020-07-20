@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
@@ -5,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
+import 'package:timer_builder/timer_builder.dart';
 import '../providers/orders.dart';
 import '../providers/auth.dart';
 import '../widgets/app_drawer.dart';
@@ -33,13 +36,6 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
     super.didChangeDependencies();
   }
 
-  // @override
-  // void dispose() {
-  //   Provider.of<Orders>(context, listen: false).unstreamLiveOrders();
-
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final orders = Provider.of<Orders>(context).liveOrders;
@@ -52,16 +48,19 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
         appBar: AppBar(),
       ),
       drawer: AppDrawer(),
-      body: Container(
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-        color: kGreyBackground,
-        child: SingleChildScrollView(
-          child: Container(
-            height: 1000,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: orders.length,
-              itemBuilder: (ctx, i) => LiveOrderItem(orders[i]),
+      body: TimerBuilder.periodic(
+        Duration(minutes: 1),
+        builder: (context) => Container(
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+          color: kGreyBackground,
+          child: SingleChildScrollView(
+            child: Container(
+              height: 1000,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: orders.length,
+                itemBuilder: (ctx, i) => LiveOrderItem(orders[i]),
+              ),
             ),
           ),
         ),

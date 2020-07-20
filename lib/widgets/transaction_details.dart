@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/models/order_item.dart';
@@ -43,7 +41,12 @@ class TransactionDetails extends StatelessWidget {
           Text("Sub Total: £${orderItem.subTotal.toStringAsFixed(2)}"),
           Text("Small order fee: £${orderItem.fees.toStringAsFixed(2)}"),
           Text("Tip: £${orderItem.tip.toStringAsFixed(2)}"),
-          Text("Total paid: £${orderItem.total.toStringAsFixed(2)}"),
+          if (orderItem.paymentDetails.paymentOption == PaymentOption.Card ||
+              orderItem.paymentAcceptedBy.isNotEmpty)
+            Text("Total paid: £${orderItem.total.toStringAsFixed(2)}"),
+          if (orderItem.paymentDetails.paymentOption != PaymentOption.Card &&
+              orderItem.paymentAcceptedBy.isEmpty)
+            Text("Total to pay: £${orderItem.total.toStringAsFixed(2)}"),
         ],
       ),
     );

@@ -21,6 +21,8 @@ class OrderItem {
   OrderStatus orderStatus;
   String acceptedBy;
   DateTime acceptedDate;
+  String paymentAcceptedBy;
+  DateTime paymentAcceptedDate;
 
   OrderItem(
       {this.id,
@@ -37,7 +39,9 @@ class OrderItem {
       this.tableNumber,
       this.notes,
       this.acceptedBy,
-      this.acceptedDate});
+      this.acceptedDate,
+      this.paymentAcceptedBy,
+      this.paymentAcceptedDate});
 
   factory OrderItem.fromMap(String documentId, Map data) {
     return OrderItem(
@@ -63,6 +67,10 @@ class OrderItem {
         acceptedBy: data['acceptedBy'] ?? '',
         acceptedDate:
             data['acceptedDate'] != null ? data['acceptedDate'].toDate() : null,
+        paymentAcceptedBy: data['paymentAcceptedBy'] ?? '',
+        paymentAcceptedDate: data['paymentAcceptedDate'] != null
+            ? data['paymentAcceptedDate'].toDate()
+            : null,
         products: (data['products'] as List<dynamic>)
             .map(
               (item) => CartItem(
@@ -93,6 +101,8 @@ class OrderItem {
         "orderStatus": orderStatus.toString(),
         "acceptedBy": acceptedBy,
         "acceptedDate": acceptedDate,
+        "paymentAcceptedBy": paymentAcceptedBy,
+        "paymentAcceptedDate": paymentAcceptedDate,
         'products': products
             .map((cp) => {
                   'id': cp.productId,
@@ -127,4 +137,4 @@ class OrderItem {
   }
 }
 
-enum OrderStatus { AwaitingConfirmation, Accepted }
+enum OrderStatus { AwaitingConfirmation, Accepted, PaymentAccepted }

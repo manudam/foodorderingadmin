@@ -133,6 +133,14 @@ class Orders with ChangeNotifier {
     await updateOrder(order, loggedInUser);
   }
 
+  Future<void> acceptPaymentOrder(OrderItem order, User loggedInUser) async {
+    order.orderStatus = OrderStatus.PaymentAccepted;
+    order.paymentAcceptedDate = DateTime.now();
+    order.paymentAcceptedBy = loggedInUser.name;
+
+    await updateOrder(order, loggedInUser);
+  }
+
   Future<void> updateOrder(OrderItem updatedOrder, User loggedInUser) async {
     print(updatedOrder.id);
 
