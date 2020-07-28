@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:foodorderingadmin/models/payment_option.dart';
 
 import '../helpers/database_collection_names.dart';
 import '../models/models.dart';
@@ -41,16 +43,19 @@ class Orders with ChangeNotifier {
             _liveOrders.where((element) => element.id == orderId).length > 0;
 
         if (!orderExists) {
-          if (order.data['orderStatus'] ==
-              OrderStatus.AwaitingConfirmation.toString()) {
+          if (order.data['orderStatus'] !=
+              OrderStatus.AcceptedAndPaid.toString()) {
             _liveOrders.add(OrderItem.fromMap(order.documentID, order.data));
           }
         } else {
-          if (order.data['orderStatus'] == OrderStatus.Accepted.toString()) {
-            var acceptedOrder = _liveOrders
-                .where((element) => element.id == orderId)
-                .toList()[0];
-            _liveOrders.remove(acceptedOrder);
+          var existingOrder =
+              _liveOrders.where((element) => element.id == orderId).toList()[0];
+
+          if (order.data['orderStatus'] ==
+              OrderStatus.AcceptedAndPaid.toString()) {
+            _liveOrders.remove(existingOrder);
+          } else {
+            existingOrder = OrderItem.fromMap(order.documentID, order.data);
           }
         }
       }
@@ -75,7 +80,7 @@ class Orders with ChangeNotifier {
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
-        .where("orderStatus", isEqualTo: OrderStatus.Accepted.toString())
+        .where("orderStatus", isEqualTo: OrderStatus.AcceptedAndPaid.toString())
         .where("acceptedDate", isGreaterThanOrEqualTo: today)
         .snapshots()
         .listen((orders) {
@@ -111,7 +116,7 @@ class Orders with ChangeNotifier {
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
-        .where("orderStatus", isEqualTo: OrderStatus.Accepted.toString())
+        .where("orderStatus", isEqualTo: OrderStatus.AcceptedAndPaid.toString())
         .where("acceptedDate", isGreaterThanOrEqualTo: queryDate)
         .where("acceptedDate", isLessThan: queryDate.add(Duration(days: 1)))
         .getDocuments();
@@ -126,7 +131,16 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> acceptOrder(OrderItem order, User loggedInUser) async {
-    order.orderStatus = OrderStatus.Accepted;
+    if (order.paymentDetails.paymentOption == PaymentOption.Card) {
+      order.orderStatus = OrderStatus.Accepted;
+    } else {
+      if (order.orderStatus == OrderStatus.PaymentAccepted) {
+        order.orderStatus = OrderStatus.AcceptedAndPaid;
+      } else {
+        order.orderStatus = OrderStatus.Accepted;
+      }
+    }
+
     order.acceptedDate = DateTime.now();
     order.acceptedBy = loggedInUser.name;
 
@@ -134,7 +148,12 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> acceptPaymentOrder(OrderItem order, User loggedInUser) async {
-    order.orderStatus = OrderStatus.PaymentAccepted;
+    if (order.orderStatus == OrderStatus.Accepted) {
+      order.orderStatus = OrderStatus.AcceptedAndPaid;
+    } else {
+      order.orderStatus = OrderStatus.PaymentAccepted;
+    }
+
     order.paymentAcceptedDate = DateTime.now();
     order.paymentAcceptedBy = loggedInUser.name;
 

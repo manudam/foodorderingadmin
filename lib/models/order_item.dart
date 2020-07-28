@@ -137,4 +137,9 @@ class OrderItem {
   }
 }
 
-enum OrderStatus { AwaitingConfirmation, Accepted, PaymentAccepted }
+enum OrderStatus {
+  AwaitingConfirmation,
+  Accepted,
+  PaymentAccepted,
+  AcceptedAndPaid
+}

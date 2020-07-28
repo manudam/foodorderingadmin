@@ -50,8 +50,12 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                     Provider.of<Auth>(context, listen: false).loggedInUser;
                 await Provider.of<Orders>(context, listen: false)
                     .acceptOrder(widget.order, loggedInUser);
-                await Provider.of<Analytics>(context, listen: false)
-                    .updateDayOrderAnalytic(widget.order, loggedInUser);
+                if (widget.order.orderStatus ==
+                    ord.OrderStatus.AcceptedAndPaid) {
+                  await Provider.of<Analytics>(context, listen: false)
+                      .updateDayOrderAnalytic(widget.order, loggedInUser);
+                }
+
                 Navigator.of(context).pop();
               },
             ),
@@ -78,7 +82,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
               '${EnumToString.parse(widget.order.paymentDetails.paymentOption)} payment'),
           content: SingleChildScrollView(
               child: Text(
-                  'Accepted payment of £${widget.order.total.toStringAsFixed(2)} by ${EnumToString.parse(widget.order.paymentDetails.paymentOption)} ')),
+                  'Have you ${EnumToString.parse(widget.order.paymentDetails.paymentOption) == "Contactless" ? "processed" : "received"} ${EnumToString.parse(widget.order.paymentDetails.paymentOption)} payment of £${widget.order.total.toStringAsFixed(2)}?')),
           actions: <Widget>[
             MaterialButton(
               child: Text('Confirm', style: TextStyle(color: Colors.white)),
@@ -196,21 +200,17 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      MaterialButton(
-                        child: Text(
-                          "Accept",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        color: widget.order.orderLate ? Colors.red : kYellow,
-                        onPressed: () {
-                          if (widget.order.paymentDetails.paymentOption ==
-                              PaymentOption.Card) _showMyDialog();
-                          if (widget.order.paymentDetails.paymentOption !=
-                                  PaymentOption.Card &&
-                              widget.order.paymentAcceptedBy.isNotEmpty)
+                      if (widget.order.orderStatus != ord.OrderStatus.Accepted)
+                        MaterialButton(
+                          child: Text(
+                            "Accept",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          color: widget.order.orderLate ? Colors.red : kYellow,
+                          onPressed: () {
                             _showMyDialog();
-                        },
-                      ),
+                          },
+                        ),
                       SizedBox(
                         width: 10,
                       ),
