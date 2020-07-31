@@ -62,7 +62,7 @@ class _AcceptedOrdersScreenScreenState extends State<ArchiveOrdersScreen> {
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                height: 1000,
+                height: MediaQuery.of(context).size.height * 2,
                 color: kGreyBackground,
                 child: ArchivedOrderList(),
               ),

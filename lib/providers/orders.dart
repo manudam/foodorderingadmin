@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodorderingadmin/models/payment_option.dart';
@@ -131,14 +130,12 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> acceptOrder(OrderItem order, User loggedInUser) async {
-    if (order.paymentDetails.paymentOption == PaymentOption.Card) {
-      order.orderStatus = OrderStatus.Accepted;
+    print(order.id);
+    if (order.paymentDetails.paymentOption == PaymentOption.Card ||
+        order.orderStatus == OrderStatus.PaymentAccepted) {
+      order.orderStatus = OrderStatus.AcceptedAndPaid;
     } else {
-      if (order.orderStatus == OrderStatus.PaymentAccepted) {
-        order.orderStatus = OrderStatus.AcceptedAndPaid;
-      } else {
-        order.orderStatus = OrderStatus.Accepted;
-      }
+      order.orderStatus = OrderStatus.Accepted;
     }
 
     order.acceptedDate = DateTime.now();

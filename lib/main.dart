@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:foodorderingadmin/providers/restaurants.dart';
 import 'package:foodorderingadmin/screens/splash_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:sentry/sentry.dart';
 
 import 'package:provider/provider.dart';
 
@@ -23,7 +26,37 @@ void main() async {
   // Pass all uncaught errors from the framework to Crashlytics.
   FlutterError.onError = Crashlytics.instance.recordFlutterError;
 
-  runApp(MyApp());
+  var sentry = SentryClient(
+      dsn:
+          "https://88ac15266a84451590f644e95ac7a754@o428042.ingest.sentry.io/5372992");
+
+  FlutterError.onError = (details, {bool forceReport = false}) {
+    try {
+      sentry.captureException(
+        exception: details.exception,
+        stackTrace: details.stack,
+      );
+    } catch (e) {
+      print('Sending report to sentry.io failed: $e');
+    } finally {
+      // Also use Flutter's pretty error logging to the device's console.
+      FlutterError.dumpErrorToConsole(details, forceReport: forceReport);
+    }
+  };
+
+  runZoned(() => runApp(MyApp()),
+      onError: (Object error, StackTrace stackTrace) {
+    try {
+      sentry.captureException(
+        exception: error,
+        stackTrace: stackTrace,
+      );
+      print('Error sent to sentry.io: $error');
+    } catch (e) {
+      print('Sending report to sentry.io failed: $e');
+      print('Original error: $error');
+    }
+  });
 }
 
 class MyApp extends StatelessWidget {

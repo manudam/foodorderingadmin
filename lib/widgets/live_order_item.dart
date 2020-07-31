@@ -48,6 +48,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
               onPressed: () async {
                 final loggedInUser =
                     Provider.of<Auth>(context, listen: false).loggedInUser;
+
                 await Provider.of<Orders>(context, listen: false)
                     .acceptOrder(widget.order, loggedInUser);
                 if (widget.order.orderStatus ==
@@ -157,7 +158,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                   ),
                   Container(
                     height:
-                        (50 + (widget.order.products.length * 22)).toDouble(),
+                        (50 + (widget.order.products.length * 30)).toDouble(),
                     child: ListView.builder(
                         itemCount: widget.order.products.length,
                         itemBuilder: (ctx, i) {
@@ -173,7 +174,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                                 right: 0,
                                 top: newCategory ? 20 : 0,
                                 bottom: 0),
-                            child: Row(
+                            child: Wrap(
                               children: [
                                 Text(
                                   "${product.quantity.toString()} ${product.title}",

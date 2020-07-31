@@ -55,7 +55,7 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
           color: kGreyBackground,
           child: SingleChildScrollView(
             child: Container(
-              height: 1000,
+              height: MediaQuery.of(context).size.height * 2,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: orders.length,

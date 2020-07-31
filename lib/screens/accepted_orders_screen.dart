@@ -56,7 +56,7 @@ class _AcceptedOrdersScreenScreenState extends State<AcceptedOrdersScreen> {
         color: kLightGreyBackground,
         child: SingleChildScrollView(
           child: Container(
-            height: 1000,
+            height: MediaQuery.of(context).size.height * 2,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: orders.length,

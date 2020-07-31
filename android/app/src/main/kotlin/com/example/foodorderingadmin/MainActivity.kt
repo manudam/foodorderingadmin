@@ -1,4 +1,4 @@
-package com.example.foodorderingadmin
+package com.trianglecarrot.foodorderinghost
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:70430548453:android:d1262997c6d1cac0778f0c",
+        "mobilesdk_app_id": "1:70430548453:android:dc59f5097b283f42778f0c",
         "android_client_info": {
-          "package_name": "com.trianglecarrot.foodorderingadmin"
+          "package_name": "com.trianglecarrot.foodorderinghost"
         }
       },
       "oauth_client": [
@@ -32,10 +32,10 @@
               "client_type": 3
             },
             {
-              "client_id": "70430548453-rjq0l0nunl9oequaubd66anu9i58btn9.apps.googleusercontent.com",
+              "client_id": "70430548453-bdbnkhui233iafj4s9h5qsbjuinkkd2c.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.trianglecarrot.foodorderingadmin"
+                "bundle_id": "com.trianglecarrot.foodorderinghost"
               }
             }
           ]
@@ -44,9 +44,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:70430548453:android:dc59f5097b283f42778f0c",
+        "mobilesdk_app_id": "1:70430548453:android:c9ee5d4921f35c61778f0c",
         "android_client_info": {
-          "package_name": "com.trianglecarrot.foodorderingapp"
+          "package_name": "com.trianglecarrot.foodorderinghost"
         }
       },
       "oauth_client": [
@@ -68,10 +68,10 @@
               "client_type": 3
             },
             {
-              "client_id": "70430548453-rjq0l0nunl9oequaubd66anu9i58btn9.apps.googleusercontent.com",
+              "client_id": "70430548453-bdbnkhui233iafj4s9h5qsbjuinkkd2c.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.trianglecarrot.foodorderingadmin"
+                "bundle_id": "com.trianglecarrot.foodorderinghost"
               }
             }
           ]
