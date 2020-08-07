@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodorderingadmin/models/payment_option.dart';
@@ -43,7 +44,7 @@ class Orders with ChangeNotifier {
 
         if (!orderExists) {
           if (order.data['orderStatus'] !=
-              OrderStatus.AcceptedAndPaid.toString()) {
+              EnumToString.parse(OrderStatus.AcceptedAndPaid)) {
             _liveOrders.add(OrderItem.fromMap(order.documentID, order.data));
           }
         } else {
@@ -51,7 +52,7 @@ class Orders with ChangeNotifier {
               _liveOrders.where((element) => element.id == orderId).toList()[0];
 
           if (order.data['orderStatus'] ==
-              OrderStatus.AcceptedAndPaid.toString()) {
+              EnumToString.parse(OrderStatus.AcceptedAndPaid)) {
             _liveOrders.remove(existingOrder);
           } else {
             existingOrder = OrderItem.fromMap(order.documentID, order.data);
@@ -79,7 +80,8 @@ class Orders with ChangeNotifier {
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
-        .where("orderStatus", isEqualTo: OrderStatus.AcceptedAndPaid.toString())
+        .where("orderStatus",
+            isEqualTo: EnumToString.parse(OrderStatus.AcceptedAndPaid))
         .where("acceptedDate", isGreaterThanOrEqualTo: today)
         .snapshots()
         .listen((orders) {
@@ -115,7 +117,8 @@ class Orders with ChangeNotifier {
         .collection(DatabaseCollectionNames.restaurants)
         .document(loggedinUser.restaurantId)
         .collection(DatabaseCollectionNames.orders)
-        .where("orderStatus", isEqualTo: OrderStatus.AcceptedAndPaid.toString())
+        .where("orderStatus",
+            isEqualTo: EnumToString.parse(OrderStatus.AcceptedAndPaid))
         .where("acceptedDate", isGreaterThanOrEqualTo: queryDate)
         .where("acceptedDate", isLessThan: queryDate.add(Duration(days: 1)))
         .getDocuments();

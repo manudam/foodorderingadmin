@@ -10,7 +10,8 @@ class TransactionDetails extends StatelessWidget {
   TransactionDetails(this.orderItem);
 
   void _launchURL(String paymentIntentId) async {
-    String url = 'https://dashboard.stripe.com/test/payments/$paymentIntentId';
+    //String url = 'https://dashboard.stripe.com/test/payments/$paymentIntentId';
+    String url = 'https://dashboard.stripe.com/payments/$paymentIntentId';
     if (await canLaunch(url)) {
       await launch(url);
     } else {

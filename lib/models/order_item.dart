@@ -98,7 +98,7 @@ class OrderItem {
         "notes": notes,
         "restaurantId": restaurantId,
         "tableNumber": tableNumber,
-        "orderStatus": orderStatus.toString(),
+        "orderStatus": EnumToString.parse(orderStatus),
         "acceptedBy": acceptedBy,
         "acceptedDate": acceptedDate,
         "paymentAcceptedBy": paymentAcceptedBy,
