@@ -3,6 +3,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:foodorderingadmin/models/payment_option.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 import '../helpers/database_collection_names.dart';
 import '../models/models.dart';
@@ -46,6 +47,8 @@ class Orders with ChangeNotifier {
           if (order.data['orderStatus'] !=
               EnumToString.parse(OrderStatus.AcceptedAndPaid)) {
             _liveOrders.add(OrderItem.fromMap(order.documentID, order.data));
+            FlutterRingtonePlayer.play(
+                android: AndroidSounds.notification, ios: IosSounds.glass);
           }
         } else {
           var existingOrder =
