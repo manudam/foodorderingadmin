@@ -27,8 +27,9 @@ class Orders with ChangeNotifier {
   Future<void> streamLiveOrders(User loggedinUser) async {
     _liveOrders.clear();
 
+    var pageLoadDate = DateTime.now();
     var today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        DateTime(pageLoadDate.year, pageLoadDate.month, pageLoadDate.day);
 
     _liveOrdersListerer = _fireStore
         .collection(DatabaseCollectionNames.restaurants)
@@ -46,9 +47,12 @@ class Orders with ChangeNotifier {
         if (!orderExists) {
           if (order.data['orderStatus'] !=
               EnumToString.parse(OrderStatus.AcceptedAndPaid)) {
-            _liveOrders.add(OrderItem.fromMap(order.documentID, order.data));
-            FlutterRingtonePlayer.play(
-                android: AndroidSounds.notification, ios: IosSounds.glass);
+            var orderItem = OrderItem.fromMap(order.documentID, order.data);
+            _liveOrders.add(orderItem);
+            if (orderItem.orderDate.isAfter(pageLoadDate)) {
+              FlutterRingtonePlayer.play(
+                  android: AndroidSounds.notification, ios: IosSounds.glass);
+            }
           }
         } else {
           var existingOrder =

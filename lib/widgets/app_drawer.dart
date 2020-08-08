@@ -16,9 +16,6 @@ class _AppDrawerState extends State<AppDrawer> {
   @override
   void didChangeDependencies() {
     if (!_isInit) {
-      var loggedInUser = Provider.of<Auth>(context).loggedInUser;
-      Provider.of<Orders>(context).streamLiveOrders(loggedInUser);
-
       _isInit = true;
     }
     super.didChangeDependencies();
