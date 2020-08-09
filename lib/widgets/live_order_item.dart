@@ -31,7 +31,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
@@ -76,7 +76,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
   Future<void> _acceptPaymentDialog() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
@@ -93,6 +93,13 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                     Provider.of<Auth>(context, listen: false).loggedInUser;
                 await Provider.of<Orders>(context, listen: false)
                     .acceptPaymentOrder(widget.order, loggedInUser);
+
+                if (widget.order.orderStatus ==
+                    ord.OrderStatus.AcceptedAndPaid) {
+                  await Provider.of<Analytics>(context, listen: false)
+                      .updateDayOrderAnalytic(widget.order, loggedInUser);
+                }
+
                 Navigator.of(context).pop();
               },
             ),
