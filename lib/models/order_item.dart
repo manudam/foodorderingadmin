@@ -1,7 +1,7 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:flutter/foundation.dart';
 
 import 'payment_details.dart';
+import 'payment_option.dart';
 
 import 'cart_item.dart';
 
@@ -20,28 +20,29 @@ class OrderItem {
   final String tableNumber;
   OrderStatus orderStatus;
   String acceptedBy;
-  DateTime acceptedDate;
+  DateTime? acceptedDate;
   String paymentAcceptedBy;
-  DateTime paymentAcceptedDate;
+  DateTime? paymentAcceptedDate;
 
-  OrderItem(
-      {this.id,
-      @required this.orderNumber,
-      @required this.total,
-      @required this.subTotal,
-      @required this.tip,
-      @required this.fees,
-      @required this.products,
-      @required this.orderDate,
-      @required this.paymentDetails,
-      @required this.restaurantId,
-      @required this.orderStatus,
-      this.tableNumber,
-      this.notes,
-      this.acceptedBy,
-      this.acceptedDate,
-      this.paymentAcceptedBy,
-      this.paymentAcceptedDate});
+  OrderItem({
+    this.id = '',
+    required this.orderNumber,
+    required this.total,
+    required this.subTotal,
+    required this.tip,
+    required this.fees,
+    required this.products,
+    required this.orderDate,
+    required this.paymentDetails,
+    required this.restaurantId,
+    required this.orderStatus,
+    this.tableNumber = '',
+    this.notes = '',
+    this.acceptedBy = '',
+    this.acceptedDate,
+    this.paymentAcceptedBy = '',
+    this.paymentAcceptedDate,
+  });
 
   factory OrderItem.fromMap(String documentId, Map data) {
     return OrderItem(
@@ -56,37 +57,35 @@ class OrderItem {
         tip: data['tip'] != null ? double.parse(data['tip'].toString()) : 0.00,
         fees:
             data['fees'] != null ? double.parse(data['fees'].toString()) : 0.00,
-        orderDate:
-            data['orderDate'] != null ? data['orderDate'].toDate() : null,
-        orderStatus: data['orderStatus'] != null
-            ? EnumToString.fromString(OrderStatus.values, data['orderStatus'])
-            : null,
+        orderDate: _asDateTime(data['orderDate']),
+        orderStatus: _orderStatusFromString(data['orderStatus']),
         tableNumber: data['tableNumber'] ?? '',
         notes: data['notes'] ?? '',
         restaurantId: data['restaurantId'] ?? '',
         acceptedBy: data['acceptedBy'] ?? '',
-        acceptedDate:
-            data['acceptedDate'] != null ? data['acceptedDate'].toDate() : null,
+        acceptedDate: _asDateTime(data['acceptedDate']),
         paymentAcceptedBy: data['paymentAcceptedBy'] ?? '',
-        paymentAcceptedDate: data['paymentAcceptedDate'] != null
-            ? data['paymentAcceptedDate'].toDate()
-            : null,
-        products: (data['products'] as List<dynamic>)
+        paymentAcceptedDate: _asDateTime(data['paymentAcceptedDate']),
+        products: ((data['products'] as List<dynamic>?) ?? [])
             .map(
               (item) => CartItem(
-                  productId: item['id'],
-                  price: data['price'] != null
-                      ? double.parse(data['price'].toString())
+                  productId: item['id'] ?? '',
+                  price: item['price'] != null
+                      ? double.parse(item['price'].toString())
                       : 0.00,
-                  quantity: item['quantity'],
-                  title: item['title'],
-                  notes: item['notes'],
-                  category: item['category']),
+                  quantity: (item['quantity'] as num?)?.toInt() ?? 0,
+                  title: item['title'] ?? '',
+                  notes: item['notes'] ?? '',
+                  category: item['category'] ?? ''),
             )
             .toList(),
         paymentDetails: data["paymentDetails"] != null
             ? PaymentDetails.fromMap(data["paymentDetails"])
-            : null);
+            : PaymentDetails(
+                paymentOption: PaymentOption.None,
+                name: '',
+                email: '',
+              ));
   }
 
   Map<String, dynamic> toJson() => {
@@ -98,11 +97,11 @@ class OrderItem {
         "notes": notes,
         "restaurantId": restaurantId,
         "tableNumber": tableNumber,
-        "orderStatus": EnumToString.parse(orderStatus),
+        "orderStatus": _orderStatusToStorage(orderStatus),
         "acceptedBy": acceptedBy,
-        "acceptedDate": acceptedDate,
+        "acceptedDate": acceptedDate?.toIso8601String(),
         "paymentAcceptedBy": paymentAcceptedBy,
-        "paymentAcceptedDate": paymentAcceptedDate,
+        "paymentAcceptedDate": paymentAcceptedDate?.toIso8601String(),
         'products': products
             .map((cp) => {
                   'id': cp.productId,
@@ -120,18 +119,16 @@ class OrderItem {
       DateTime.now().difference(orderDate).inMinutes > 5 ? true : false;
 
   Map<String, int> categoryItemCount() {
-    var categoryList = this.products.map((e) => e.category).toList();
-    var categoryItemCount = Map<String, int>();
+    var categoryList = products.map((e) => e.category).toList();
+    var categoryItemCount = <String, int>{};
 
-    categoryList.forEach((element) {
+    for (var element in categoryList) {
       if (!categoryItemCount.containsKey(element)) {
         categoryItemCount[element] = 1;
       } else {
-        categoryItemCount[element] += 1;
+        categoryItemCount[element] = (categoryItemCount[element] ?? 0) + 1;
       }
-    });
-
-    print(categoryItemCount);
+    }
 
     return categoryItemCount;
   }
@@ -142,4 +139,48 @@ enum OrderStatus {
   Accepted,
   PaymentAccepted,
   AcceptedAndPaid
+}
+
+DateTime _asDateTime(dynamic value) {
+  if (value == null) {
+    return DateTime.now();
+  }
+  if (value is DateTime) {
+    return value;
+  }
+  if (value is String) {
+    return DateTime.tryParse(value) ?? DateTime.now();
+  }
+  try {
+    return value.toDate();
+  } catch (_) {
+    return DateTime.now();
+  }
+}
+
+OrderStatus _orderStatusFromString(dynamic value) {
+  final raw = value?.toString() ?? '';
+  return EnumToString.fromString(OrderStatus.values, raw) ??
+      EnumToString.fromString(
+        OrderStatus.values,
+        raw
+            .replaceAll('awaitingConfirmation', 'AwaitingConfirmation')
+            .replaceAll('paymentAccepted', 'PaymentAccepted')
+            .replaceAll('acceptedAndPaid', 'AcceptedAndPaid')
+            .replaceAll('accepted', 'Accepted'),
+      ) ??
+      OrderStatus.AwaitingConfirmation;
+}
+
+String _orderStatusToStorage(OrderStatus status) {
+  switch (status) {
+    case OrderStatus.AwaitingConfirmation:
+      return 'awaitingConfirmation';
+    case OrderStatus.Accepted:
+      return 'accepted';
+    case OrderStatus.PaymentAccepted:
+      return 'paymentAccepted';
+    case OrderStatus.AcceptedAndPaid:
+      return 'acceptedAndPaid';
+  }
 }

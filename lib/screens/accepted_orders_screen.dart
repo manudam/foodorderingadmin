@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:provider/provider.dart';
 
 import 'package:foodorderingadmin/helpers/constants.dart';
@@ -12,6 +10,8 @@ import '../widgets/accepted_order_item.dart';
 
 class AcceptedOrdersScreen extends StatefulWidget {
   static const routeName = "acceptedorders";
+
+  const AcceptedOrdersScreen({super.key});
 
   @override
   _AcceptedOrdersScreenScreenState createState() =>
@@ -55,7 +55,7 @@ class _AcceptedOrdersScreenScreenState extends State<AcceptedOrdersScreen> {
         padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
         color: kLightGreyBackground,
         child: SingleChildScrollView(
-          child: Container(
+          child: SizedBox(
             height: MediaQuery.of(context).size.height * 2,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,

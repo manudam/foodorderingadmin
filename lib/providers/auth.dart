@@ -1,92 +1,52 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
-import '../models/user.dart';
+import 'package:foodorderingadmin/models/user.dart';
+import 'package:foodorderingadmin/services/pocketbase_service.dart';
 
 class Auth extends ChangeNotifier {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final _fireStore = Firestore.instance;
-  final _collection = "Users";
+  final _pocketBase = PocketBaseService.client;
 
-  User loggedInUser;
-
-  // Firebase user one-time fetch
-  Future<FirebaseUser> get getUser => _auth.currentUser();
-
-  Future<FirebaseUser> getFirebaseUser() async {
-    FirebaseUser firebaseUser = await FirebaseAuth.instance.currentUser();
-    if (firebaseUser == null) {
-      firebaseUser = await FirebaseAuth.instance.onAuthStateChanged.first;
-    }
-    return firebaseUser;
-  }
+  User loggedInUser = User();
 
   Future<User> fetchUserDetails() async {
-    if (loggedInUser == null) {
-      var user = await getFirebaseUser();
-      if (user?.uid != null) {
-        var document =
-            await _fireStore.document('/$_collection/${user.uid}').get();
-
-        loggedInUser = User.fromMap(document.documentID, document.data);
-
-        notifyListeners();
+    if (loggedInUser.uid.isEmpty && _pocketBase.authStore.record != null) {
+      final record = _pocketBase.authStore.record;
+      if (record != null) {
+        loggedInUser = User.fromMap(record.id, record.data);
       }
+      notifyListeners();
     }
 
     return loggedInUser;
   }
 
-  //Method to handle user sign in using email and password
   Future<bool> login(String email, String password) async {
-    loggedInUser = null;
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
-    await fetchUserDetails();
+    loggedInUser = User();
+    final auth = await _pocketBase
+        .collection('users')
+        .authWithPassword(email.trim(), password);
+    loggedInUser = User.fromMap(auth.record.id, auth.record.data);
     notifyListeners();
     return true;
   }
 
-  //Method to handle user sign in using email and password
   Future<bool> register(String name, String email, String password) async {
-    try {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) {
-        final newUser = User(
-          uid: value.user.uid,
-          email: value.user.email,
-          name: name,
-        );
+    final record = await _pocketBase.collection('users').create(body: {
+      'email': email.trim(),
+      'password': password,
+      'passwordConfirm': password,
+      'name': name,
+      'role': 'admin',
+    });
 
-        _updateUserFirestore(newUser, value.user);
-      });
-
-      await fetchUserDetails();
-      notifyListeners();
-
-      return true;
-    } catch (e) {
-      return false;
-    }
+    loggedInUser = User.fromMap(record.id, record.data);
+    notifyListeners();
+    return true;
   }
 
-  // Sign out
   Future<bool> signOut() async {
-    try {
-      await _auth.signOut();
-      loggedInUser = null;
-      notifyListeners();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  //updates the firestore users collection
-  void _updateUserFirestore(User user, FirebaseUser firebaseUser) {
-    _fireStore
-        .document('/$_collection/${firebaseUser.uid}')
-        .setData(user.toJson(), merge: true);
+    _pocketBase.authStore.clear();
+    loggedInUser = User();
+    notifyListeners();
+    return true;
   }
 }

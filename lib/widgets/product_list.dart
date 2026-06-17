@@ -7,6 +7,8 @@ import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:provider/provider.dart';
 
 class ProductList extends StatelessWidget {
+  const ProductList({super.key});
+
   @override
   Widget build(BuildContext context) {
     final menuData = Provider.of<Menu>(context);
@@ -16,8 +18,8 @@ class ProductList extends StatelessWidget {
 
     List<Widget> cards = [];
 
-    products.forEach((product) {
-      cards.add(Container(
+    for (var product in products) {
+      cards.add(SizedBox(
         width: 350,
         child: Container(
           margin: EdgeInsets.all(10),
@@ -66,12 +68,12 @@ class ProductList extends StatelessWidget {
           ),
         ),
       ));
-    });
+    }
 
     return Wrap(
-      children: cards,
       direction: Axis.vertical,
       runAlignment: WrapAlignment.start,
+      children: cards,
     );
   }
 }

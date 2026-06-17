@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/providers/auth.dart';
 import 'package:foodorderingadmin/providers/orders.dart';
@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../screens/screens.dart';
 
 class AppDrawer extends StatefulWidget {
+  const AppDrawer({super.key});
+
   @override
   _AppDrawerState createState() => _AppDrawerState();
 }
@@ -32,13 +34,13 @@ class _AppDrawerState extends State<AppDrawer> {
             ListTile(
               title: Container(
                 alignment: Alignment.centerLeft,
-                child: Badge(
+                child: badges.Badge(
                   badgeContent: Text(
                     orders.length.toString(),
                     style: TextStyle(color: Colors.white),
                   ),
                   child: Text('New Orders'),
-                  position: BadgePosition.topRight(right: -25),
+                  position: badges.BadgePosition.topEnd(top: -12, end: -25),
                 ),
               ),
               onTap: () {

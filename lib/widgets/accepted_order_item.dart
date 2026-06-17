@@ -8,7 +8,7 @@ import '../models/order_item.dart' as ord;
 class AcceptedOrderItem extends StatefulWidget {
   final ord.OrderItem order;
 
-  AcceptedOrderItem(this.order);
+  const AcceptedOrderItem(this.order, {super.key});
 
   @override
   _AcceptedOrderItemState createState() => _AcceptedOrderItemState();
@@ -27,7 +27,7 @@ class _AcceptedOrderItemState extends State<AcceptedOrderItem> {
             style: kBlackTitle,
           ),
           Text(
-              'Accepted: ${DateFormat("dd/MM/yyyy HH:mm").format(widget.order.acceptedDate.toLocal())}'),
+              'Accepted: ${DateFormat("dd/MM/yyyy HH:mm").format((widget.order.acceptedDate ?? widget.order.orderDate).toLocal())}'),
           SizedBox(
             height: 15,
           ),
@@ -44,7 +44,7 @@ class _AcceptedOrderItemState extends State<AcceptedOrderItem> {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
+                  SizedBox(
                     height:
                         (100 + (widget.order.products.length * 10)).toDouble(),
                     child: ListView.builder(

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class CategoryItem extends StatelessWidget {
   final String category;
 
-  CategoryItem(this.category);
+  const CategoryItem(this.category, {super.key});
 
   @override
   Widget build(BuildContext context) {

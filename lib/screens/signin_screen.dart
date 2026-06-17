@@ -11,14 +11,16 @@ import 'package:provider/provider.dart';
 class SigninScreen extends StatefulWidget {
   static const routeName = "login";
 
+  const SigninScreen({super.key});
+
   @override
   _SigninScreenState createState() => _SigninScreenState();
 }
 
 class _SigninScreenState extends State<SigninScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _email = new TextEditingController();
-  final TextEditingController _password = new TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
   final _passwordFocusNode = FocusNode();
   bool _loading = false;
 
@@ -37,9 +39,9 @@ class _SigninScreenState extends State<SigninScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var _auth = Provider.of<Auth>(context, listen: false);
+    var auth = Provider.of<Auth>(context, listen: false);
 
-    Future<void> _showMyDialog(String title, String message) async {
+    Future<void> showMyDialog(String title, String message) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: true,
@@ -54,11 +56,13 @@ class _SigninScreenState extends State<SigninScreen> {
 
     return Scaffold(
       body: LoadingScreen(
+        inAsyncCall: _loading,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Form(
           key: _formKey,
           child: GestureDetector(
             onTap: () {
-              FocusScope.of(context).requestFocus(new FocusNode());
+              FocusScope.of(context).requestFocus(FocusNode());
             },
             child: SingleChildScrollView(
               child: Container(
@@ -91,25 +95,26 @@ class _SigninScreenState extends State<SigninScreen> {
                           SizedBox(
                             height: 20,
                           ),
-                          Container(
+                          SizedBox(
                             width: 400,
                             child: FormInputFieldWithIcon(
                               controller: _email,
                               iconPrefix: Icons.email,
                               labelText: "Email",
                               keyboardType: TextInputType.emailAddress,
-                              onChanged: (value) => null,
+                              onChanged: (value) {},
                               textInputAction: TextInputAction.next,
                               onFieldSubmitted: (_) {
                                 FocusScope.of(context)
                                     .requestFocus(_passwordFocusNode);
                               },
-                              onSaved: (value) => _email.text = value,
+                              onSaved: (value) => _email.text = value ?? '',
                               validator: (value) {
-                                if (value.isEmpty) {
+                                final email = value ?? '';
+                                if (email.isEmpty) {
                                   return 'Please enter an email';
                                 }
-                                if (EmailValidator.validate(value) == false) {
+                                if (EmailValidator.validate(email) == false) {
                                   return 'Please enter a valid email address';
                                 }
                                 return null;
@@ -117,20 +122,20 @@ class _SigninScreenState extends State<SigninScreen> {
                             ),
                           ),
                           FormVerticalSpace(),
-                          Container(
+                          SizedBox(
                             width: 400,
                             child: FormInputFieldWithIcon(
                               controller: _password,
                               iconPrefix: Icons.lock,
                               labelText: "Password",
                               obscureText: true,
-                              onChanged: (value) => null,
-                              onSaved: (value) => _password.text = value,
+                              onChanged: (value) {},
+                              onSaved: (value) => _password.text = value ?? '',
                               maxLines: 1,
                               focusNode: _passwordFocusNode,
                               textInputAction: TextInputAction.done,
                               validator: (value) {
-                                if (value.isEmpty) {
+                                if ((value ?? '').isEmpty) {
                                   return 'Please enter a password';
                                 }
                                 return null;
@@ -139,23 +144,16 @@ class _SigninScreenState extends State<SigninScreen> {
                           ),
                           FormVerticalSpace(),
                           MaterialButton(
-                            child: Container(
-                              width: 150,
-                              alignment: Alignment.center,
-                              child: Text('Sign-in',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20)),
-                            ),
                             padding: EdgeInsets.all(10),
                             color: kYellow,
                             onPressed: () async {
-                              if (_formKey.currentState.validate()) {
+                              if (_formKey.currentState?.validate() ?? false) {
                                 setState(() {
                                   _loading = true;
                                 });
 
                                 try {
-                                  var result = await _auth.login(
+                                  var result = await auth.login(
                                       _email.text, _password.text);
 
                                   if (result) {
@@ -163,7 +161,7 @@ class _SigninScreenState extends State<SigninScreen> {
                                         .pushNamed(LiveOrdersScreen.routeName);
                                   }
                                 } catch (exception) {
-                                  _showMyDialog("Error", exception.message);
+                                  showMyDialog("Error", exception.toString());
                                 } finally {
                                   setState(() {
                                     _loading = false;
@@ -171,6 +169,13 @@ class _SigninScreenState extends State<SigninScreen> {
                                 }
                               }
                             },
+                            child: Container(
+                              width: 150,
+                              alignment: Alignment.center,
+                              child: Text('Sign-in',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20)),
+                            ),
                           ),
                         ],
                       ),
@@ -182,8 +187,6 @@ class _SigninScreenState extends State<SigninScreen> {
             ),
           ),
         ),
-        inAsyncCall: _loading,
-        color: Theme.of(context).scaffoldBackgroundColor,
       ),
     );
   }

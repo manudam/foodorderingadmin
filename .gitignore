@@ -30,9 +30,37 @@
 .pub-cache/
 .pub/
 /build/
+ios/build/
+**/build/
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+ui-debug.log*
+coverage/
 
 # Web related
 lib/generated_plugin_registrant.dart
+
+# Native generated files
+**/.DS_Store
+**/ios/.symlinks/
+**/ios/Pods/
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework/
+**/ios/Flutter/Flutter.framework/
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/Runner/GeneratedPluginRegistrant.*
+**/macos/Flutter/ephemeral/
+**/macos/Pods/
+**/linux/flutter/ephemeral/
+**/windows/flutter/ephemeral/
+**/android/.gradle/
+**/android/local.properties
+**/android/key.properties
+**/android/app/src/main/java/
 
 # Symbolication related
 app.*.symbols

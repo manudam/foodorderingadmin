@@ -1,5 +1,4 @@
 import 'package:enum_to_string/enum_to_string.dart';
-import 'package:flutter/material.dart';
 import 'package:foodorderingadmin/models/payment_option.dart';
 
 class PaymentDetails {
@@ -11,20 +10,22 @@ class PaymentDetails {
   String confirmationMethod;
 
   PaymentDetails({
-    @required this.paymentOption,
-    this.status,
-    this.paymentIntentId,
-    @required this.name,
-    @required this.email,
-    this.confirmationMethod,
+    required this.paymentOption,
+    this.status = '',
+    this.paymentIntentId = '',
+    required this.name,
+    required this.email,
+    this.confirmationMethod = '',
   });
 
   factory PaymentDetails.fromMap(Map data) {
     return PaymentDetails(
       paymentOption: data['paymentOption'] != null
-          ? EnumToString.fromString(PaymentOption.values, data['paymentOption'])
-          : null,
-      status: data['status'],
+          ? EnumToString.fromString(
+                  PaymentOption.values, data['paymentOption']) ??
+              PaymentOption.None
+          : PaymentOption.None,
+      status: data['status'] ?? '',
       paymentIntentId: data['paymentIntentId'] ?? '',
       name: data['name'] ?? '',
       email: data['email'] ?? '',

@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 class OrderDateItem extends StatelessWidget {
   final DayOrderSummary dayOrderSummary;
 
-  OrderDateItem(this.dayOrderSummary);
+  const OrderDateItem(this.dayOrderSummary, {super.key});
 
   @override
   Widget build(BuildContext context) {

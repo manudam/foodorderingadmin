@@ -1,26 +1,21 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
-import '../models/models.dart';
-import '../helpers/helpers.dart';
+import 'package:foodorderingadmin/models/models.dart';
+import 'package:foodorderingadmin/services/pocketbase_service.dart';
 
 class Restaurants with ChangeNotifier {
-  final _databaseReference = Firestore.instance;
-  Restaurant restaurant;
-  String selectedCategory;
+  final _pocketBase = PocketBaseService.client;
+  Restaurant restaurant = Restaurant();
+  String selectedCategory = '';
 
-  List<String> get categories =>
-      restaurant != null ? restaurant.categories : [];
+  List<String> get categories => restaurant.categories;
 
   Future<void> fetchRestaurantDetails(String restaurantId) async {
-    var restaurantDoc = await _databaseReference
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(restaurantId)
-        .get();
+    final record =
+        await _pocketBase.collection('restaurants').getOne(restaurantId);
 
-    restaurant = Restaurant.fromMap(restaurantId, restaurantDoc.data);
+    restaurant = Restaurant.fromMap(record.id, record.data);
 
-    if (categories.length > 0) {
+    if (categories.isNotEmpty) {
       selectedCategory = categories[0];
     }
 

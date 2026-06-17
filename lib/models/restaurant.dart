@@ -10,18 +10,17 @@ class Restaurant {
   List<String> categories = [];
 
   Restaurant({
-    this.id,
-    this.name,
-    this.info,
-    this.address,
-    this.stripeAccountId,
-    this.titleFont,
-    this.categories,
-  });
+    this.id = '',
+    this.name = '',
+    this.info = '',
+    Address? address,
+    this.stripeAccountId = '',
+    this.titleFont = '',
+    List<String>? categories,
+  })  : address = address ?? Address(),
+        categories = categories ?? [];
 
   factory Restaurant.fromMap(String documentId, Map data) {
-    print(data['categories']);
-
     return Restaurant(
         id: documentId,
         name: data['name'] ?? '',
@@ -30,6 +29,6 @@ class Restaurant {
         titleFont: data['titleFont'] ?? '',
         address:
             data['address'] != null ? Address.fromMap(data['address']) : null,
-        categories: List.from(data['categories']));
+        categories: List<String>.from(data['categories'] ?? []));
   }
 }

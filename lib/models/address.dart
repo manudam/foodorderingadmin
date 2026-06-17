@@ -5,12 +5,13 @@ class Address {
   final String county;
   final String postcode;
 
-  Address(
-      {this.addressLine1,
-      this.addressLine2,
-      this.town,
-      this.county,
-      this.postcode});
+  Address({
+    this.addressLine1 = '',
+    this.addressLine2 = '',
+    this.town = '',
+    this.county = '',
+    this.postcode = '',
+  });
 
   factory Address.fromMap(Map data) {
     return Address(

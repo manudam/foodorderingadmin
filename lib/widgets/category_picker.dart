@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'category_item.dart';
 
 class CategoryPicker extends StatefulWidget {
+  const CategoryPicker({super.key});
+
   @override
   _State createState() => _State();
 }
@@ -13,7 +15,7 @@ class _State extends State<CategoryPicker> {
   @override
   Widget build(BuildContext context) {
     var restaurant = Provider.of<Restaurants>(context).restaurant;
-    final categories = restaurant != null ? restaurant.categories : [];
+    final categories = restaurant.categories;
 
     return Container(
         padding: EdgeInsets.only(left: 30, right: 20),

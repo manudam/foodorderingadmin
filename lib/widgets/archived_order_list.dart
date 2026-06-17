@@ -6,6 +6,8 @@ import 'package:foodorderingadmin/widgets/archived_order_item.dart';
 import 'package:provider/provider.dart';
 
 class ArchivedOrderList extends StatelessWidget {
+  const ArchivedOrderList({super.key});
+
   @override
   Widget build(BuildContext context) {
     var selectedOrderDay = Provider.of<Analytics>(context).selectedOrderDay;
@@ -14,12 +16,12 @@ class ArchivedOrderList extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-      child: FutureBuilder(
+      child: FutureBuilder<List>(
           future: orderData.fetchArchivedOrders(
               selectedOrderDay.orderDate, loggedInUser),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
-              var orders = snapshot.data;
+              var orders = snapshot.data ?? [];
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: orders.length,

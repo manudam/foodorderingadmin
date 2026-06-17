@@ -4,14 +4,19 @@ class User {
   String name;
   String restaurantId;
 
-  User({this.uid, this.email, this.name, this.restaurantId});
+  User({
+    this.uid = '',
+    this.email = '',
+    this.name = '',
+    this.restaurantId = '',
+  });
 
   factory User.fromMap(String documentId, Map data) {
     return User(
       uid: documentId,
       email: data['email'] ?? '',
       name: data['name'] ?? '',
-      restaurantId: data['restaurantId'] ?? '',
+      restaurantId: data['restaurantId'] ?? data['restaurant'] ?? '',
     );
   }
 

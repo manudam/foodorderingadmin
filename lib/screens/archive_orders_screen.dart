@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
-import 'package:foodorderingadmin/screens/screens.dart';
 import 'package:foodorderingadmin/widgets/archived_order_list.dart';
 import 'package:foodorderingadmin/widgets/order_date_picker.dart';
 import 'package:provider/provider.dart';
 
 import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/widgets/custom_app_bar.dart';
-import '../providers/orders.dart';
 import '../providers/auth.dart';
 import '../widgets/app_drawer.dart';
-import '../widgets/accepted_order_item.dart';
 
 class ArchiveOrdersScreen extends StatefulWidget {
   static const routeName = "archiveorders";
+
+  const ArchiveOrdersScreen({super.key});
 
   @override
   _AcceptedOrdersScreenScreenState createState() =>

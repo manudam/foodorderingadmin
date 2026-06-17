@@ -29,26 +29,26 @@ const TextStyle kRedSubTitle =
 const TextStyle kGreenNormalText = TextStyle(fontSize: 16, color: kGreen);
 
 //Colors
-const Color kGreyBackground = const Color(0xff5d5d5d);
+const Color kGreyBackground = Color(0xff5d5d5d);
 
-const Color kLightGreyBackground = const Color(0xffe6e6e6);
+const Color kLightGreyBackground = Color(0xffe6e6e6);
 
-const Color kYellow = const Color(0xfffcc556);
+const Color kYellow = Color(0xfffcc556);
 
-const Color kGreen = const Color(0xff55bf5e);
+const Color kGreen = Color(0xff55bf5e);
 
-const MaterialColor kGreenMaterial = const MaterialColor(
+const MaterialColor kGreenMaterial = MaterialColor(
   0xff55bf5e,
-  const <int, Color>{
-    50: const Color(0xff55bf5e),
-    100: const Color(0xff55bf5e),
-    200: const Color(0xff55bf5e),
-    300: const Color(0xff55bf5e),
-    400: const Color(0xff55bf5e),
-    500: const Color(0xff55bf5e),
-    600: const Color(0xff55bf5e),
-    700: const Color(0xff55bf5e),
-    800: const Color(0xff55bf5e),
-    900: const Color(0xff55bf5e),
+  <int, Color>{
+    50: Color(0xff55bf5e),
+    100: Color(0xff55bf5e),
+    200: Color(0xff55bf5e),
+    300: Color(0xff55bf5e),
+    400: Color(0xff55bf5e),
+    500: Color(0xff55bf5e),
+    600: Color(0xff55bf5e),
+    700: Color(0xff55bf5e),
+    800: Color(0xff55bf5e),
+    900: Color(0xff55bf5e),
   },
 );

@@ -14,7 +14,7 @@ import '../models/order_item.dart' as ord;
 class LiveOrderItem extends StatefulWidget {
   final ord.OrderItem order;
 
-  LiveOrderItem(this.order);
+  const LiveOrderItem(this.order, {super.key});
 
   @override
   _LiveOrderItemState createState() => _LiveOrderItemState();
@@ -43,7 +43,6 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
           ),
           actions: <Widget>[
             MaterialButton(
-              child: Text('Confirm', style: TextStyle(color: Colors.white)),
               color: widget.order.orderLate ? Colors.red : kYellow,
               onPressed: () async {
                 final loggedInUser =
@@ -59,13 +58,14 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
 
                 Navigator.of(context).pop();
               },
+              child: Text('Confirm', style: TextStyle(color: Colors.white)),
             ),
             MaterialButton(
-              child: Text('Not Yet', style: TextStyle(color: Colors.white)),
               color: Colors.grey,
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: Text('Not Yet', style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -86,7 +86,6 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                   'Have you ${EnumToString.parse(widget.order.paymentDetails.paymentOption) == "Contactless" ? "processed" : "received"} ${EnumToString.parse(widget.order.paymentDetails.paymentOption)} payment of £${widget.order.total.toStringAsFixed(2)}?')),
           actions: <Widget>[
             MaterialButton(
-              child: Text('Confirm', style: TextStyle(color: Colors.white)),
               color: widget.order.orderLate ? Colors.red : kYellow,
               onPressed: () async {
                 final loggedInUser =
@@ -102,13 +101,14 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
 
                 Navigator.of(context).pop();
               },
+              child: Text('Confirm', style: TextStyle(color: Colors.white)),
             ),
             MaterialButton(
-              child: Text('Not Yet', style: TextStyle(color: Colors.white)),
               color: Colors.grey,
               onPressed: () {
                 Navigator.of(context).pop();
               },
+              child: Text('Not Yet', style: TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -130,7 +130,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
 
   @override
   Widget build(BuildContext context) {
-    String category = widget.order.products.length > 0
+    String category = widget.order.products.isNotEmpty
         ? widget.order.products[0].category
         : "";
 
@@ -163,7 +163,7 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
+                  SizedBox(
                     height:
                         (50 + (widget.order.products.length * 30)).toDouble(),
                     child: ListView.builder(
@@ -197,27 +197,26 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                           );
                         }),
                   ),
-                  if (widget.order.notes != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Text(
-                        widget.order.notes,
-                        style: TextStyle(color: Colors.grey),
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      widget.order.notes,
+                      style: TextStyle(color: Colors.grey),
                     ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (widget.order.orderStatus != ord.OrderStatus.Accepted)
                         MaterialButton(
-                          child: Text(
-                            "Accept",
-                            style: TextStyle(color: Colors.white),
-                          ),
                           color: widget.order.orderLate ? Colors.red : kYellow,
                           onPressed: () {
                             _showMyDialog();
                           },
+                          child: Text(
+                            "Accept",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       SizedBox(
                         width: 10,
@@ -226,14 +225,14 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
                               PaymentOption.Card &&
                           widget.order.paymentAcceptedBy.isEmpty)
                         MaterialButton(
-                          child: Text(
-                            "${EnumToString.parse(widget.order.paymentDetails.paymentOption)} £${widget.order.total.toStringAsFixed(2)}",
-                            style: TextStyle(color: Colors.white),
-                          ),
                           color: widget.order.orderLate ? Colors.red : kYellow,
                           onPressed: () {
                             _acceptPaymentDialog();
                           },
+                          child: Text(
+                            "${EnumToString.parse(widget.order.paymentDetails.paymentOption)} £${widget.order.total.toStringAsFixed(2)}",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                     ],
                   ),
@@ -241,15 +240,17 @@ class _LiveOrderItemState extends State<LiveOrderItem> {
               ),
             ),
           ),
-          FlatButton(
-            padding: EdgeInsets.all(7.5),
-            child: Text(
-              "more details #${widget.order.orderNumber.toString()}",
-              style: kGreenNormalText,
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.all(7.5),
             ),
             onPressed: () {
               _showTransactionDetails();
             },
+            child: Text(
+              "more details #${widget.order.orderNumber.toString()}",
+              style: kGreenNormalText,
+            ),
           )
         ],
       ),

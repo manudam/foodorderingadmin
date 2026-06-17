@@ -7,13 +7,14 @@ import 'package:url_launcher/url_launcher.dart';
 class TransactionDetails extends StatelessWidget {
   final OrderItem orderItem;
 
-  TransactionDetails(this.orderItem);
+  const TransactionDetails(this.orderItem, {super.key});
 
   void _launchURL(String paymentIntentId) async {
     //String url = 'https://dashboard.stripe.com/test/payments/$paymentIntentId';
-    String url = 'https://dashboard.stripe.com/payments/$paymentIntentId';
-    if (await canLaunch(url)) {
-      await launch(url);
+    final url =
+        Uri.parse('https://dashboard.stripe.com/payments/$paymentIntentId');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
     } else {
       throw 'Could not launch $url';
     }
@@ -38,7 +39,7 @@ class TransactionDetails extends StatelessWidget {
               ),
             ]),
           Text(
-              "Payment Method: ${EnumToString.parse(orderItem.paymentDetails.paymentOption)}"),
+              "Payment Method: ${EnumToString.convertToString(orderItem.paymentDetails.paymentOption)}"),
           Text("Sub Total: £${orderItem.subTotal.toStringAsFixed(2)}"),
           Text("Small order fee: £${orderItem.fees.toStringAsFixed(2)}"),
           Text("Tip: £${orderItem.tip.toStringAsFixed(2)}"),

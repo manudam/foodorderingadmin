@@ -1,11 +1,12 @@
 class DayOrderAnalytic {
   List<DayOrderSummary> dayOrderSummary = [];
 
-  DayOrderAnalytic({this.dayOrderSummary});
+  DayOrderAnalytic({List<DayOrderSummary>? dayOrderSummary})
+      : dayOrderSummary = dayOrderSummary ?? [];
 
   factory DayOrderAnalytic.fromMap(Map data) {
     return DayOrderAnalytic(
-      dayOrderSummary: (data['dayOrderSummary'] as List<dynamic>)
+      dayOrderSummary: ((data['dayOrderSummary'] as List<dynamic>?) ?? [])
           .map((item) => DayOrderSummary.fromMap(item))
           .toList(),
     );
@@ -21,13 +22,17 @@ class DayOrderSummary {
   int orderCount;
   double total;
 
-  DayOrderSummary({this.orderDate, this.orderCount, this.total});
+  DayOrderSummary({
+    DateTime? orderDate,
+    this.orderCount = 0,
+    this.total = 0,
+  }) : orderDate = orderDate ?? DateTime.fromMillisecondsSinceEpoch(0);
 
   factory DayOrderSummary.fromMap(Map data) {
     return DayOrderSummary(
-      orderDate: data['orderDate'] != null ? data['orderDate'].toDate() : null,
-      orderCount: data["orderCount"],
-      total: data["total"],
+      orderDate: _asDateTime(data['orderDate'] ?? data['date']),
+      orderCount: (data["orderCount"] as num?)?.toInt() ?? 0,
+      total: (data["total"] as num?)?.toDouble() ?? 0,
     );
   }
 
@@ -36,4 +41,21 @@ class DayOrderSummary {
         "orderCount": orderCount,
         "total": total,
       };
+}
+
+DateTime? _asDateTime(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is DateTime) {
+    return value;
+  }
+  if (value is String) {
+    return DateTime.tryParse(value);
+  }
+  try {
+    return value.toDate();
+  } catch (_) {
+    return null;
+  }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class Product {
@@ -16,25 +15,26 @@ class Product {
   DateTime createdDate;
   String createdBy;
 
-  Product(
-      {@required this.id,
-      @required this.name,
-      @required this.description,
-      @required this.price,
-      @required this.category,
-      this.disabled = false,
-      this.isVegan = false,
-      this.isVegeterian = false,
-      this.isDairyFree = false,
-      this.isGlutenFree = false,
-      this.isNutFree = false,
-      this.createdDate,
-      this.createdBy});
+  Product({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.category,
+    this.disabled = false,
+    this.isVegan = false,
+    this.isVegeterian = false,
+    this.isDairyFree = false,
+    this.isGlutenFree = false,
+    this.isNutFree = false,
+    DateTime? createdDate,
+    this.createdBy = '',
+  }) : createdDate = createdDate ?? DateTime.fromMillisecondsSinceEpoch(0);
 
   factory Product.fromMap(Map data) {
     return Product(
-      id: data['id'] != null ? data['id'] : Uuid().v1(),
-      name: data['name'],
+      id: data['id'] ?? Uuid().v1(),
+      name: data['name'] ?? '',
       description: data['description'] ?? '',
       price:
           data['price'] != null ? double.parse(data['price'].toString()) : 0.00,
@@ -45,8 +45,7 @@ class Product {
       isDairyFree: data['isDairyFree'] ?? false,
       isGlutenFree: data['isGlutenFree'] ?? false,
       isNutFree: data['isNutFree'] ?? false,
-      createdDate:
-          data['createdDate'] != null ? data['createdDate'].toDate() : null,
+      createdDate: _asDateTime(data['createdDate']),
       createdBy: data['createdBy'] ?? '',
     );
   }
@@ -66,4 +65,21 @@ class Product {
         "createdDate": createdDate,
         "createdBy": createdBy
       };
+}
+
+DateTime? _asDateTime(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is DateTime) {
+    return value;
+  }
+  if (value is String) {
+    return DateTime.tryParse(value);
+  }
+  try {
+    return value.toDate();
+  } catch (_) {
+    return null;
+  }
 }

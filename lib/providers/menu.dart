@@ -1,16 +1,15 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:foodorderingadmin/models/models.dart';
+import 'package:foodorderingadmin/services/pocketbase_service.dart';
 import 'package:uuid/uuid.dart';
-
-import '../models/models.dart';
-import '../helpers/helpers.dart';
 
 const String standardMenuDocName = "StandardMenu";
 
 class Menu with ChangeNotifier {
-  final _databaseReference = Firestore.instance;
+  final _pocketBase = PocketBaseService.client;
 
-  List<Product> _products = [];
+  final List<Product> _products = [];
+  String? _menuRecordId;
 
   List<Product> get items {
     return [..._products];
@@ -19,24 +18,21 @@ class Menu with ChangeNotifier {
   Future<void> fetchMenu(String restaurantId) async {
     _products.clear();
 
-    var document = await _databaseReference
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(restaurantId)
-        .collection(DatabaseCollectionNames.menu)
-        .document(standardMenuDocName)
-        .get();
+    var records = await _pocketBase.collection('menus').getFullList(
+          filter: "restaurant = '$restaurantId' && key = 'standard'",
+          batch: 1,
+        );
 
-    print(document.data);
+    if (records.isNotEmpty) {
+      _menuRecordId = records.first.id;
+      var products = ((records.first.data['products'] as List<dynamic>?) ?? [])
+          .map((item) => Product.fromMap(item))
+          .toList();
 
-    var products = (document.data['products'] as List<dynamic>)
-        .map((item) => Product.fromMap(item))
-        .toList();
+      _products.addAll(products);
+    }
 
-    _products.addAll(products);
-
-    _products.sort((a, b) => a.createdDate != null && b.createdDate != null
-        ? a.createdDate.compareTo(b.createdDate)
-        : 0);
+    _products.sort((a, b) => a.createdDate.compareTo(b.createdDate));
 
     notifyListeners();
   }
@@ -85,12 +81,17 @@ class Menu with ChangeNotifier {
   }
 
   Future<void> saveProducts(User loggedInUser) async {
-    await _databaseReference
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedInUser.restaurantId)
-        .collection(DatabaseCollectionNames.menu)
-        .document(standardMenuDocName)
-        .setData({"products": _products.map((pr) => pr.toJson()).toList()},
-            merge: true);
+    final body = {
+      "restaurant": loggedInUser.restaurantId,
+      "key": "standard",
+      "products": _products.map((pr) => pr.toJson()).toList(),
+    };
+
+    if (_menuRecordId == null) {
+      final record = await _pocketBase.collection('menus').create(body: body);
+      _menuRecordId = record.id;
+    } else {
+      await _pocketBase.collection('menus').update(_menuRecordId!, body: body);
+    }
   }
 }

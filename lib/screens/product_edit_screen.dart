@@ -13,6 +13,8 @@ import '../models/models.dart';
 class ProductEditScreen extends StatefulWidget {
   static String routeName = 'productedit';
 
+  const ProductEditScreen({super.key});
+
   @override
   _ProductEditScreenState createState() => _ProductEditScreenState();
 }
@@ -24,7 +26,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   final _form = GlobalKey<FormState>();
 
   var _editedProduct = Product(
-      id: null,
+      id: '',
       name: '',
       price: 0,
       description: '',
@@ -32,13 +34,13 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
       isVegan: false,
       isVegeterian: false);
 
-  var _initValues = {
+  Map<String, dynamic> _initValues = {
     'name': '',
     'description': '',
     'price': '',
     'category': '',
     'isVegan': false,
-    'isVegetarian': false,
+    'isVegeterian': false,
     'isDairyFree': false,
     'isGlutenFree': false,
     'isNutFree': false,
@@ -49,26 +51,27 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
   @override
   void didChangeDependencies() {
     if (_isInit) {
-      final productId = ModalRoute.of(context).settings.arguments as String;
+      final productId = ModalRoute.of(context)?.settings.arguments as String?;
       final menuData = Provider.of<Menu>(context, listen: false);
-      if (productId != null) {
+      if (productId != null && productId.isNotEmpty) {
         _editedProduct = menuData.findById(productId);
-        _initValues = {
-          'name': _editedProduct.name,
-          'description': _editedProduct.description,
-          'price': _editedProduct.price.toString(),
-          'category': _editedProduct.category,
-          'isVegan': _editedProduct.isVegan,
-          'isVegeterian': _editedProduct.isVegeterian,
-          'isDairyFree': _editedProduct.isDairyFree,
-          'isGlutenFree': _editedProduct.isGlutenFree,
-          'isNutFree': _editedProduct.isNutFree,
-        };
       }
+      _initValues = {
+        'name': _editedProduct.name,
+        'description': _editedProduct.description,
+        'price': _editedProduct.price.toString(),
+        'category': _editedProduct.category,
+        'isVegan': _editedProduct.isVegan,
+        'isVegeterian': _editedProduct.isVegeterian,
+        'isDairyFree': _editedProduct.isDairyFree,
+        'isGlutenFree': _editedProduct.isGlutenFree,
+        'isNutFree': _editedProduct.isNutFree,
+      };
 
-      if (_initValues['category'].toString().isEmpty)
+      if (_initValues['category'].toString().isEmpty) {
         _initValues['category'] =
             Provider.of<Restaurants>(context, listen: false).selectedCategory;
+      }
     }
 
     _isInit = false;
@@ -93,23 +96,23 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
 
 //update tags
       _editedProduct.isVegan = _initValues['isVegan'];
-      _editedProduct.isVegeterian = _initValues['isVegetarian'];
+      _editedProduct.isVegeterian = _initValues['isVegeterian'];
       _editedProduct.isDairyFree = _initValues['isDairyFree'];
       _editedProduct.isGlutenFree = _initValues['isGlutenFree'];
       _editedProduct.isNutFree = _initValues['isNutFree'];
 
-      final isValid = _form.currentState.validate();
+      final isValid = _form.currentState?.validate() ?? false;
       if (!isValid) {
         return;
       }
-      _form.currentState.save();
+      _form.currentState?.save();
 
-      if (_editedProduct.id != null) {
-        Provider.of<Menu>(context, listen: false)
-            .updateProduct(_editedProduct.id, _editedProduct, loggedInUser);
-      } else {
+      if (_editedProduct.id.isEmpty) {
         Provider.of<Menu>(context, listen: false)
             .addProduct(_editedProduct, loggedInUser);
+      } else {
+        Provider.of<Menu>(context, listen: false)
+            .updateProduct(_editedProduct.id, _editedProduct, loggedInUser);
       }
       Navigator.of(context).pop();
     } finally {
@@ -126,7 +129,9 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
 
     return Scaffold(
         appBar: BaseAppBar(
-          title: _initValues["name"] != '' ? _initValues["name"] : "Add Item",
+          title: _initValues["name"] != ''
+              ? _initValues["name"] as String
+              : "Add Item",
           backgroundColor: Colors.white,
           textColor: Colors.black,
           appBar: AppBar(),
@@ -148,24 +153,24 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     decoration: InputDecoration(
                         labelText: 'Category', border: OutlineInputBorder()),
                     items: categories
-                        ?.map((item) => DropdownMenuItem(
+                        .map((item) => DropdownMenuItem(
+                              value: item,
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 0),
                                 child: Text(item),
                               ),
-                              value: item,
                             ))
-                        ?.toList(),
-                    value: _initValues['category'],
+                        .toList(),
+                    initialValue: _initValues['category'],
                     onSaved: (value) {
-                      _editedProduct.category = value;
+                      _editedProduct.category = value?.toString() ?? '';
                     },
                     onChanged: (value) {
                       FocusScope.of(context).requestFocus(_nameFocusNode);
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if ((value?.toString() ?? '').isEmpty) {
                         return 'Please select a category.';
                       }
                       return null;
@@ -175,7 +180,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                     height: 10,
                   ),
                   TextFormField(
-                    initialValue: _initValues['name'],
+                    initialValue: _initValues['name'] as String,
                     decoration: InputDecoration(
                         labelText: 'Name', border: OutlineInputBorder()),
                     textInputAction: TextInputAction.next,
@@ -185,20 +190,20 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                           .requestFocus(_descriptionFocusNode);
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if ((value ?? '').isEmpty) {
                         return 'Please enter a name.';
                       }
                       return null;
                     },
                     onSaved: (value) {
-                      _editedProduct.name = value;
+                      _editedProduct.name = value ?? '';
                     },
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   TextFormField(
-                    initialValue: _initValues['description'],
+                    initialValue: _initValues['description'] as String,
                     decoration: InputDecoration(
                         labelText: 'Description', border: OutlineInputBorder()),
                     maxLines: 3,
@@ -209,14 +214,14 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       FocusScope.of(context).requestFocus(_priceFocusNode);
                     },
                     onSaved: (value) {
-                      _editedProduct.description = value;
+                      _editedProduct.description = value ?? '';
                     },
                   ),
                   SizedBox(
                     height: 10,
                   ),
                   TextFormField(
-                    initialValue: _initValues['price'],
+                    initialValue: _initValues['price'] as String,
                     decoration: InputDecoration(
                         labelText: 'Price',
                         border: OutlineInputBorder(),
@@ -229,10 +234,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       DecimalTextInputFormatter(decimalRange: 2)
                     ],
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if ((value ?? '').isEmpty) {
                         return 'Please enter a price.';
                       }
-                      if (double.tryParse(value) == null) {
+                      if (double.tryParse(value!) == null) {
                         return 'Please enter a valid price.';
                       }
                       if (double.parse(value) < 0) {
@@ -241,7 +246,7 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       return null;
                     },
                     onSaved: (value) {
-                      _editedProduct.price = double.parse(value);
+                      _editedProduct.price = double.parse(value ?? '0');
                     },
                   ),
                   SizedBox(
@@ -262,17 +267,17 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                       ],
                     ),
                   ),
-                  Container(
+                  SizedBox(
                     height: 240,
                     width: 300,
                     child: Wrap(
                       direction: Axis.horizontal,
                       runAlignment: WrapAlignment.start,
                       children: [
-                        Container(
+                        SizedBox(
                           width: 150,
                           child: CheckboxListTile(
-                            value: _initValues["isVegeterian"] ?? false,
+                            value: _initValues["isVegeterian"] as bool,
                             title: Image(
                               image: AssetImage("images/Veggie.png"),
                             ),
@@ -283,10 +288,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                             },
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 150,
                           child: CheckboxListTile(
-                            value: _initValues["isVegan"] ?? false,
+                            value: _initValues["isVegan"] as bool,
                             title: Image(
                               image: AssetImage("images/Vegan.png"),
                             ),
@@ -297,10 +302,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                             },
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 150,
                           child: CheckboxListTile(
-                            value: _initValues["isDairyFree"] ?? false,
+                            value: _initValues["isDairyFree"] as bool,
                             title: Image(
                               image: AssetImage("images/DairyFree.png"),
                             ),
@@ -311,10 +316,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                             },
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 150,
                           child: CheckboxListTile(
-                            value: _initValues["isGlutenFree"] ?? false,
+                            value: _initValues["isGlutenFree"] as bool,
                             title: Image(
                               image: AssetImage("images/GlutenFree.png"),
                             ),
@@ -325,10 +330,10 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                             },
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: 150,
                           child: CheckboxListTile(
-                            value: _initValues["isNutFree"] ?? false,
+                            value: _initValues["isNutFree"] as bool,
                             title: Image(
                               image: AssetImage("images/NutFree.png"),
                             ),
@@ -345,33 +350,33 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      SizedBox(
                         width: 150,
                         child: MaterialButton(
-                          child: Text(
-                            "Save",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
                           color: kYellow,
                           onPressed: () {
                             _saveForm();
                           },
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
                         ),
                       ),
                       SizedBox(
                         width: 20,
                       ),
-                      Container(
+                      SizedBox(
                         width: 150,
                         child: MaterialButton(
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(color: Colors.white, fontSize: 20),
-                          ),
                           color: Colors.grey,
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(color: Colors.white, fontSize: 20),
+                          ),
                         ),
                       )
                     ],

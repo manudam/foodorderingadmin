@@ -14,6 +14,8 @@ import '../providers/menu.dart';
 class LiveMenuEditScreen extends StatefulWidget {
   static String routeName = 'product';
 
+  const LiveMenuEditScreen({super.key});
+
   @override
   _LiveMenuEditScreenState createState() => _LiveMenuEditScreenState();
 }
@@ -48,7 +50,7 @@ class _LiveMenuEditScreenState extends State<LiveMenuEditScreen> {
         backgroundColor: kLightGreyBackground,
         textColor: Colors.black,
         actions: [
-          Container(
+          SizedBox(
             width: 100,
             child: IconButton(
               icon: Icon(

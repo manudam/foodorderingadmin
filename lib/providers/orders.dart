@@ -1,146 +1,123 @@
-import 'dart:async';
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:foodorderingadmin/models/payment_option.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
+import 'package:foodorderingadmin/models/payment_option.dart';
+import 'package:foodorderingadmin/services/pocketbase_service.dart';
+import 'package:pocketbase/pocketbase.dart';
 
-import '../helpers/database_collection_names.dart';
 import '../models/models.dart';
 
 class Orders with ChangeNotifier {
   List<OrderItem> _liveOrders = [];
   List<OrderItem> _acceptedOrders = [];
-  final _fireStore = Firestore.instance;
+  final _pocketBase = PocketBaseService.client;
 
-  StreamSubscription<QuerySnapshot> _liveOrdersListerer;
-  StreamSubscription<QuerySnapshot> _acceptedOrdersListerer;
+  UnsubscribeFunc? _liveOrdersUnsubscribe;
+  UnsubscribeFunc? _acceptedOrdersUnsubscribe;
 
   List<OrderItem> get liveOrders {
-    return [..._liveOrders.toList()];
+    return [..._liveOrders];
   }
 
   List<OrderItem> get acceptedOrders {
-    return [..._acceptedOrders.toList()];
+    return [..._acceptedOrders];
   }
 
   Future<void> streamLiveOrders(User loggedinUser) async {
     _liveOrders.clear();
 
     var pageLoadDate = DateTime.now();
-    var today =
-        DateTime(pageLoadDate.year, pageLoadDate.month, pageLoadDate.day);
+    await _refreshLiveOrders(loggedinUser);
 
-    _liveOrdersListerer = _fireStore
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedinUser.restaurantId)
-        .collection(DatabaseCollectionNames.orders)
-        .where("orderDate", isGreaterThanOrEqualTo: today)
-        .snapshots()
-        .listen((orders) {
-      for (var order in orders.documents) {
-        var orderId = order.documentID;
-
-        var orderExists =
-            _liveOrders.where((element) => element.id == orderId).length > 0;
-
-        if (!orderExists) {
-          if (order.data['orderStatus'] !=
-              EnumToString.parse(OrderStatus.AcceptedAndPaid)) {
-            var orderItem = OrderItem.fromMap(order.documentID, order.data);
-            _liveOrders.add(orderItem);
-            if (orderItem.orderDate.isAfter(pageLoadDate)) {
-              FlutterRingtonePlayer.play(
-                  android: AndroidSounds.notification, ios: IosSounds.glass);
-            }
-          }
-        } else {
-          var existingOrder =
-              _liveOrders.where((element) => element.id == orderId).toList()[0];
-
-          if (order.data['orderStatus'] ==
-              EnumToString.parse(OrderStatus.AcceptedAndPaid)) {
-            _liveOrders.remove(existingOrder);
-          } else {
-            existingOrder = OrderItem.fromMap(order.documentID, order.data);
-          }
-        }
+    _liveOrdersUnsubscribe =
+        await _pocketBase.collection('orders').subscribe('*', (event) async {
+      if (event.record == null) {
+        return;
       }
-      notifyListeners();
-    });
+
+      await _refreshLiveOrders(loggedinUser);
+      final record = event.record;
+      if (record == null) {
+        return;
+      }
+      final changedOrder = OrderItem.fromMap(
+        record.id,
+        record.data,
+      );
+      if (event.action == 'create' &&
+          changedOrder.orderDate.isAfter(pageLoadDate)) {
+        FlutterRingtonePlayer().playNotification();
+      }
+    }, filter: "restaurant = '${loggedinUser.restaurantId}'");
+  }
+
+  Future<void> _refreshLiveOrders(User loggedinUser) async {
+    final today = _startOfDay(DateTime.now()).toIso8601String();
+    final records = await _pocketBase.collection('orders').getFullList(
+          filter:
+              "restaurant = '${loggedinUser.restaurantId}' && orderDate >= '$today'",
+          sort: '-orderDate',
+        );
+
+    _liveOrders = records
+        .map((record) => OrderItem.fromMap(record.id, record.data))
+        .where((order) => order.orderStatus != OrderStatus.AcceptedAndPaid)
+        .toList();
+
+    notifyListeners();
   }
 
   void unstreamLiveOrders() {
-    if (_liveOrdersListerer != null) {
-      _liveOrdersListerer.cancel();
-      _liveOrdersListerer = null;
-    }
+    _liveOrdersUnsubscribe?.call();
+    _liveOrdersUnsubscribe = null;
   }
 
   Future<void> streamAcceptedOrders(User loggedinUser) async {
     _acceptedOrders.clear();
+    await _refreshAcceptedOrders(loggedinUser);
 
-    var today =
-        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    _acceptedOrdersUnsubscribe =
+        await _pocketBase.collection('orders').subscribe('*', (event) async {
+      await _refreshAcceptedOrders(loggedinUser);
+    }, filter: "restaurant = '${loggedinUser.restaurantId}'");
+  }
 
-    _acceptedOrdersListerer = _fireStore
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedinUser.restaurantId)
-        .collection(DatabaseCollectionNames.orders)
-        .where("orderStatus",
-            isEqualTo: EnumToString.parse(OrderStatus.AcceptedAndPaid))
-        .where("acceptedDate", isGreaterThanOrEqualTo: today)
-        .snapshots()
-        .listen((orders) {
-      for (var order in orders.documents) {
-        var orderId = order.documentID;
+  Future<void> _refreshAcceptedOrders(User loggedinUser) async {
+    var today = _startOfDay(DateTime.now()).toIso8601String();
 
-        var orderExists =
-            _acceptedOrders.where((element) => element.id == orderId).length >
-                0;
+    var records = await _pocketBase.collection('orders').getFullList(
+          filter:
+              "restaurant = '${loggedinUser.restaurantId}' && orderStatus = 'acceptedAndPaid' && acceptedDate >= '$today'",
+          sort: '-acceptedDate',
+        );
 
-        if (!orderExists) {
-          _acceptedOrders.add(OrderItem.fromMap(order.documentID, order.data));
-        }
-      }
-      notifyListeners();
-    });
+    _acceptedOrders = records
+        .map((record) => OrderItem.fromMap(record.id, record.data))
+        .toList();
+    notifyListeners();
   }
 
   void unstreamAcceptedOrders() {
-    if (_acceptedOrdersListerer != null) {
-      _acceptedOrdersListerer.cancel();
-      _acceptedOrdersListerer = null;
-    }
+    _acceptedOrdersUnsubscribe?.call();
+    _acceptedOrdersUnsubscribe = null;
   }
 
   Future<List<OrderItem>> fetchArchivedOrders(
       DateTime orderDate, User loggedinUser) async {
-    var queryDate = DateTime(orderDate.year, orderDate.month, orderDate.day);
-    List<OrderItem> archivedOrders = [];
-    print(queryDate);
+    var queryDate = _startOfDay(orderDate);
+    var nextDate = queryDate.add(Duration(days: 1));
 
-    var documents = await _fireStore
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedinUser.restaurantId)
-        .collection(DatabaseCollectionNames.orders)
-        .where("orderStatus",
-            isEqualTo: EnumToString.parse(OrderStatus.AcceptedAndPaid))
-        .where("acceptedDate", isGreaterThanOrEqualTo: queryDate)
-        .where("acceptedDate", isLessThan: queryDate.add(Duration(days: 1)))
-        .getDocuments();
+    var records = await _pocketBase.collection('orders').getFullList(
+          filter:
+              "restaurant = '${loggedinUser.restaurantId}' && orderStatus = 'acceptedAndPaid' && acceptedDate >= '${queryDate.toIso8601String()}' && acceptedDate < '${nextDate.toIso8601String()}'",
+          sort: '-acceptedDate',
+        );
 
-    print(documents.documents.length);
-
-    for (var order in documents.documents) {
-      archivedOrders.add(OrderItem.fromMap(order.documentID, order.data));
-    }
-
-    return archivedOrders;
+    return records
+        .map((record) => OrderItem.fromMap(record.id, record.data))
+        .toList();
   }
 
   Future<void> acceptOrder(OrderItem order, User loggedInUser) async {
-    print(order.id);
     if (order.paymentDetails.paymentOption == PaymentOption.Card ||
         order.orderStatus == OrderStatus.PaymentAccepted) {
       order.orderStatus = OrderStatus.AcceptedAndPaid;
@@ -168,15 +145,14 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> updateOrder(OrderItem updatedOrder, User loggedInUser) async {
-    print(updatedOrder.id);
-
-    await _fireStore
-        .collection(DatabaseCollectionNames.restaurants)
-        .document(loggedInUser.restaurantId)
-        .collection(DatabaseCollectionNames.orders)
-        .document(updatedOrder.id)
-        .updateData(updatedOrder.toJson());
+    await _pocketBase
+        .collection('orders')
+        .update(updatedOrder.id, body: updatedOrder.toJson());
 
     notifyListeners();
   }
+}
+
+DateTime _startOfDay(DateTime value) {
+  return DateTime(value.year, value.month, value.day);
 }

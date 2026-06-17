@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:foodorderingadmin/helpers/constants.dart';
 import 'package:foodorderingadmin/widgets/transaction_details.dart';
 import 'package:intl/intl.dart';
 
@@ -8,7 +7,7 @@ import '../models/order_item.dart' as ord;
 class ArchivedOrderItem extends StatefulWidget {
   final ord.OrderItem order;
 
-  ArchivedOrderItem(this.order);
+  const ArchivedOrderItem(this.order, {super.key});
 
   @override
   _ArchivedOrderItemState createState() => _ArchivedOrderItemState();
@@ -32,13 +31,13 @@ class _ArchivedOrderItemState extends State<ArchivedOrderItem> {
                   Text(
                       "Order created: ${DateFormat("dd/MM/yyyy HH:mm").format(widget.order.orderDate.toLocal())}"),
                   Text(
-                      "Order accepted: ${DateFormat("dd/MM/yyyy HH:mm").format(widget.order.acceptedDate.toLocal())}"),
+                      "Order accepted: ${DateFormat("dd/MM/yyyy HH:mm").format((widget.order.acceptedDate ?? widget.order.orderDate).toLocal())}"),
                   Text("Table# ${widget.order.tableNumber}"),
                   TransactionDetails(widget.order),
                   SizedBox(
                     height: 20,
                   ),
-                  Container(
+                  SizedBox(
                     height:
                         (100 + (widget.order.products.length * 10)).toDouble(),
                     child: ListView.builder(

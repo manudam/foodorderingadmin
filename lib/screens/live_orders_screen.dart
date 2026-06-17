@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:foodorderingadmin/providers/analytics.dart';
 import 'package:provider/provider.dart';
 
@@ -15,6 +13,8 @@ import '../widgets/live_order_item.dart';
 
 class LiveOrdersScreen extends StatefulWidget {
   static const routeName = "liveorders";
+
+  const LiveOrdersScreen({super.key});
 
   @override
   _LiveOrdersScreenScreenState createState() => _LiveOrdersScreenScreenState();
@@ -54,7 +54,7 @@ class _LiveOrdersScreenScreenState extends State<LiveOrdersScreen> {
           padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
           color: kGreyBackground,
           child: SingleChildScrollView(
-            child: Container(
+            child: SizedBox(
               height: MediaQuery.of(context).size.height * 2,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
