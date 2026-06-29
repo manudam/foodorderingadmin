@@ -56,10 +56,11 @@ class MyApp extends StatelessWidget {
                 }
 
                 return user != null && user.restaurantId.isNotEmpty
-                    ? LiveOrdersScreen()
+                    ? DashboardScreen()
                     : SigninScreen();
               }),
           routes: {
+            DashboardScreen.routeName: (context) => DashboardScreen(),
             LiveMenuEditScreen.routeName: (context) => LiveMenuEditScreen(),
             ProductEditScreen.routeName: (context) => ProductEditScreen(),
             SigninScreen.routeName: (context) => SigninScreen(),

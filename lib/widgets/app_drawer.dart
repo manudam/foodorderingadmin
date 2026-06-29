@@ -32,6 +32,15 @@ class _AppDrawerState extends State<AppDrawer> {
         child: Column(
           children: <Widget>[
             ListTile(
+              leading: Icon(Icons.dashboard_outlined),
+              title: Text('Dashboard'),
+              onTap: () {
+                Navigator.of(context)
+                    .pushReplacementNamed(DashboardScreen.routeName);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.receipt_long_outlined),
               title: Container(
                 alignment: Alignment.centerLeft,
                 child: badges.Badge(
@@ -49,6 +58,7 @@ class _AppDrawerState extends State<AppDrawer> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.check_circle_outline),
               title: Text('Accepted Orders'),
               onTap: () {
                 Navigator.of(context)
@@ -56,6 +66,7 @@ class _AppDrawerState extends State<AppDrawer> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.edit_note),
               title: Text('Live Menu Edit'),
               onTap: () {
                 Navigator.of(context)
@@ -63,6 +74,7 @@ class _AppDrawerState extends State<AppDrawer> {
               },
             ),
             ListTile(
+              leading: Icon(Icons.archive_outlined),
               title: Text('Archived'),
               onTap: () {
                 Navigator.of(context)
@@ -71,6 +83,7 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             Divider(),
             ListTile(
+              leading: Icon(Icons.logout),
               title: Text('Log out'),
               onTap: () {
                 Provider.of<Auth>(context, listen: false).signOut();

@@ -39,7 +39,6 @@ ui-debug.log*
 coverage/
 
 # Web related
-lib/generated_plugin_registrant.dart
 
 # Native generated files
 **/.DS_Store

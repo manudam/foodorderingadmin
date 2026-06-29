@@ -1,3 +1,4 @@
+export 'dashboard_screen.dart';
 export 'live_orders_screen.dart';
 export 'accepted_orders_screen.dart';
 export 'archive_orders_screen.dart';
